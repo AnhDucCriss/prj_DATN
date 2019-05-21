@@ -79,5 +79,11 @@ namespace prj_QLPKDK.Controllers
 
             return Ok(new { message = "Xoá thuốc thành công." });
         }
+        [HttpGet("get-all-name")]
+        public async Task<IActionResult> GetAllMedicines()
+        {
+            var result = await _medicineService.GetAllMedicineName();
+            return Ok(result);
+        }
     }
 }

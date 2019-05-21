@@ -2,6 +2,7 @@
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Models.FilterResquest;
+using prj_QLPKDK.Models.Response;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -120,6 +121,25 @@ namespace prj_QLPKDK.Services
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize
             };
+        }
+
+        public async Task<List<MedicineNameResponse>> GetAllMedicineName()
+        {
+            var medicines = await _db.Medicines
+            .Select(m => new MedicineNameResponse
+            {
+                
+                medicineName = m.MedicineName
+            })
+            .ToListAsync();
+
+
+            for (int i = 0; i < medicines.Count; i++)
+            {
+                medicines[i].Id = i + 1;  // Id chạy từ 1
+            }
+
+            return medicines;
         }
 
     }
