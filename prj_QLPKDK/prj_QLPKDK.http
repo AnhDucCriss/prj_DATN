@@ -1,0 +1,6 @@
+@prj_QLPKDK_HostAddress = http://localhost:5042
+
+GET {{prj_QLPKDK_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
