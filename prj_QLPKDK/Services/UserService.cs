@@ -24,20 +24,24 @@ namespace prj_QLPKDK.Services
             return model.Id.ToString();
         }
 
-        public async Task delUser(string id)
+        public async Task<string> delUser(string id)
         {
-            var delDungcu = _db.Users!.SingleOrDefault(dungcu => dungcu.Id == id);
-            if (delDungcu != null)
+            var delUser = _db.Users!.SingleOrDefault(x => x.Id == id);
+            if (delUser != null)
             {
-                _db.Users!.Remove(delDungcu);
+                _db.Users!.Remove(delUser);
                 await _db.SaveChangesAsync();
+                return "Xoá thành công user có ID: " + id; 
+            } else
+            {
+                return "ID đưa vào không hợp lệ";
             }
         }
 
         public async Task<Users> GetUserById(string id)
         {
-            var dc = await _db.Users!.FindAsync(id);
-            return dc;
+            var user = _db.Users!.FirstOrDefault(x => x.Id == id);
+            return user;
         }
 
         public async Task<List<Users>> GetUsers()
@@ -46,12 +50,16 @@ namespace prj_QLPKDK.Services
             return users;
         }
 
-        public async Task updateUser(string id, Users model)
+        public async Task<string> updateUser(string id, Users model)
         {
             if (id == model.Id)
             {
                 _db.Users!.Update(model);
                 await _db.SaveChangesAsync();
+                return "Cập nhật thành công cho user có ID: " + id;
+            } else
+            {
+                return "ID đưa vào không hợp lệ";
             }
         }
     }
