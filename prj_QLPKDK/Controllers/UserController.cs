@@ -20,7 +20,7 @@ namespace prj_QLPKDK.Controllers
         [HttpPost("get-users")]
         public async Task<IActionResult> GetUsers(string id)
         {
-            var User = await _service.GetUsers();
+            var User = await _service.GetAll();
 
             return User == null ? NotFound() : Ok(User);
 
@@ -28,7 +28,7 @@ namespace prj_QLPKDK.Controllers
         [HttpPost("get-user-by-id")]
         public async Task<IActionResult> GetUserById(string id)
         {
-            var User = await _service.GetUserById(id);
+            var User = await _service.GetById(id);
             
             return User == null ? NotFound() : Ok(User);
 
@@ -36,24 +36,24 @@ namespace prj_QLPKDK.Controllers
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUserAsync([FromBody] Users model)
         {
-            var newUser = await _service.addUser(model);
-            var user = await _service.GetUserById(model.Id);
+            var newUser = await _service.Create(model);
+            var user = await _service.GetById(model.Id);
             return newUser == null ? NotFound() : Ok(newUser);
 
         }
         [HttpPost("update-user")]
         public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] Users model)
         {
-            var newUser = await _service.updateUser(id, model);
-            //var user = await _service.addUser();
+            var newUser = await _service.Update(id, model);
+            
             return newUser == null ? NotFound() : Ok(newUser);
 
         }
         [HttpPost("delete-user")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var delUser = await _service.delUser(id);
-            //var user = await _service.addUser();
+            var delUser = await _service.Delete(id);
+            
             return delUser == null ? NotFound() : Ok("Xoá thành công");
 
         }
