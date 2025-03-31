@@ -1,4 +1,5 @@
-﻿using prj_QLPKDK.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -17,13 +18,13 @@ namespace prj_QLPKDK.Services
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            model.Id = Guid.NewGuid().ToString(); // Tạo ID mới
+            
             await _db.Patients.AddAsync(model);
             await _db.SaveChangesAsync();
-            return model.Id;
+            return "aa";
         }
 
-        public async Task<string> Delete(string id)
+        public async Task<string> Delete(int id)
         {
             var patient = await _db.Patients.FindAsync(id);
             if (patient == null)
@@ -31,22 +32,37 @@ namespace prj_QLPKDK.Services
 
             _db.Patients.Remove(patient);
             await _db.SaveChangesAsync();
-            return id;
+            return id.ToString();
         }
 
-        public Task<List<Patients>> GetAll()
+        public async Task<List<Patients>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _db.Patients.ToListAsync();
         }
 
-        public Task<Patients> GetById(string id)
+        public async Task<Patients> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _db.Patients.FindAsync(id);
         }
 
-        public Task<string> Update(string id, Patients model)
+        public async Task<string> Update(int id, Patients model)
         {
-            throw new NotImplementedException();
+            var existingPatient = await _db.Patients.FindAsync(id);
+            if (existingPatient == null)
+                throw new KeyNotFoundException("Patient not found");
+
+            // Cập nhật thông tin
+            existingPatient.FullName = model.FullName;
+            existingPatient.DateOfBirth = model.DateOfBirth;
+            existingPatient.Email = model.Email;
+            existingPatient.Gender = model.Gender;
+            existingPatient.Address = model.Address;
+            existingPatient.PhoneNumber = model.PhoneNumber;
+            existingPatient.MedicalHistory = model.MedicalHistory;
+
+            _db.Patients.Update(existingPatient);
+            await _db.SaveChangesAsync();
+            return "d";
         }
     }
 }

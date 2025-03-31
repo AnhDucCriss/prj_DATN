@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +7,8 @@ using prj_QLPKDK.Services;
 using prj_QLPKDK.Services.Abstraction;
 using Microsoft.OpenApi.Models;
 using prj_QLPKDK.Entities.BaseEntites;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +17,11 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<WebContext>(opt => {
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+builder.Services.AddDbContext<WebContext>((serviceProvider, options) =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.AddInterceptors(serviceProvider.GetRequiredService<AuditInterceptor>()); // Gắn Interceptor vào DbContext
 });
 
 builder.Services.AddAuthentication(options =>

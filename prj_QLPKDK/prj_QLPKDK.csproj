@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\Migrations\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

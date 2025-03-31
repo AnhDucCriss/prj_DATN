@@ -15,14 +15,14 @@ namespace prj_QLPKDK.Services
 
         public async Task<string> Create(Appointments model)
         {
-            model.Id = Guid.NewGuid().ToString();
+            
             _db.Appointments!.Add(model);
             await _db.SaveChangesAsync();
 
             return model.Id.ToString();
         }
 
-        public async Task<string> Delete(string id)
+        public async Task<string> Delete(int id)
         {
             var delData = _db.Appointments!.SingleOrDefault(x => x.Id == id);
             if (delData != null)
@@ -43,13 +43,13 @@ namespace prj_QLPKDK.Services
             return datas;
         }
 
-        public async Task<Appointments> GetById(string id)
+        public async Task<Appointments> GetById(int id)
         {
             var data = _db.Appointments!.FirstOrDefault(x => x.Id == id);
             return data;
         }
 
-        public async Task<string> Update(string id, Appointments model)
+        public async Task<string> Update(int id, Appointments model)
         {
             if (id == model.Id)
             {

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Enum;
+using prj_QLPKDK.Models;
 using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Services
@@ -15,15 +17,22 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> Create(Users model)
+        public async Task<string> Create(UserRequestModel model)
         {
-            model.Id = Guid.NewGuid().ToString();
-            _db.Users!.Add(model);
+            var user = new Users();
+            user.Username = model.Username;
+            user.Password = model.Password;
+            user.FullName = model.FullName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Role = model.Role;
+            _db.Users.Add(user);
+            
             await _db.SaveChangesAsync();
-            return model.Id.ToString();
+            return user.Id.ToString();
         }
 
-        public async Task<string> Delete(string id)
+        public async Task<string> Delete(int id)
         {
             var dellData = _db.Users!.SingleOrDefault(x => x.Id == id);
             if (dellData != null)
@@ -44,17 +53,26 @@ namespace prj_QLPKDK.Services
             return datas;
         }
 
-        public async Task<Users> GetById(string id)
+        public async Task<Users> GetById(int id)
         {
             var data = _db.Users!.FirstOrDefault(x => x.Id == id);
             return data;
         }
 
-        public async Task<string> Update(string id, Users model)
+        public async Task<string> Update(int id, UserRequestModel model)
         {
-            if (id == model.Id)
+
+            var user = _db.Users.FirstOrDefault(x => x.Id == id);
+            
+            if (user != null)
             {
-                _db.Users!.Update(model);
+                user.Username = model.Username;
+                user.Password = model.Password;
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
+                //user.Role = model.Role;
+                _db.Users!.Update(user);
                 await _db.SaveChangesAsync();
                 return "Cập nhật thành công cho user có ID: " + id;
             }

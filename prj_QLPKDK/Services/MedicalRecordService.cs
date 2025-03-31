@@ -15,13 +15,13 @@ namespace prj_QLPKDK.Services
 
         public async Task<string> Create(MedicalRecords model)
         {
-            model.Id = Guid.NewGuid().ToString();
+            
             _db.MedicalRecords!.Add(model);
             await _db.SaveChangesAsync();
             return model.Id.ToString();
         }
 
-        public async Task<string> Delete(string id)
+        public async Task<string> Delete(int id)
         {
             var dellData = _db.MedicalRecords!.SingleOrDefault(x => x.Id == id);
             if (dellData != null)
@@ -42,13 +42,13 @@ namespace prj_QLPKDK.Services
             return datas;
         }
 
-        public async Task<MedicalRecords> GetById(string id)
+        public async Task<MedicalRecords> GetById(int id)
         {
             var data = _db.MedicalRecords!.FirstOrDefault(x => x.Id == id);
             return data;
         }
 
-        public async Task<string> Update(string id, MedicalRecords model)
+        public async Task<string> Update(int id, MedicalRecords model)
         {
             if (id == model.Id)
             {

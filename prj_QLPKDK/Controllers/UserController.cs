@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models;
 using prj_QLPKDK.Services;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -8,6 +10,7 @@ namespace prj_QLPKDK.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserServices _service;
@@ -18,7 +21,7 @@ namespace prj_QLPKDK.Controllers
             
         }
         [HttpPost("get-users")]
-        public async Task<IActionResult> GetUsers(string id)
+        public async Task<IActionResult> GetUsers(int id)
         {
             var User = await _service.GetAll();
 
@@ -26,7 +29,7 @@ namespace prj_QLPKDK.Controllers
 
         }
         [HttpPost("get-user-by-id")]
-        public async Task<IActionResult> GetUserById(string id)
+        public async Task<IActionResult> GetUserById(int id)
         {
             var User = await _service.GetById(id);
             
@@ -34,15 +37,14 @@ namespace prj_QLPKDK.Controllers
 
         }
         [HttpPost("add-user")]
-        public async Task<IActionResult> AddUserAsync([FromBody] Users model)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserRequestModel model)
         {
             var newUser = await _service.Create(model);
-            var user = await _service.GetById(model.Id);
             return newUser == null ? NotFound() : Ok(newUser);
 
         }
         [HttpPost("update-user")]
-        public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] Users model)
+        public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserRequestModel model)
         {
             var newUser = await _service.Update(id, model);
             
@@ -50,7 +52,7 @@ namespace prj_QLPKDK.Controllers
 
         }
         [HttpPost("delete-user")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             var delUser = await _service.Delete(id);
             

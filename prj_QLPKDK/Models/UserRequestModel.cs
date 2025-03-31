@@ -1,10 +1,8 @@
-﻿using prj_QLPKDK.Entities.BaseEntities;
-using prj_QLPKDK.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using prj_QLPKDK.Enum;
 
-namespace prj_QLPKDK.Entities
+namespace prj_QLPKDK.Models
 {
-    public class Users : BaseEntity
+    public class UserRequestModel
     {
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
