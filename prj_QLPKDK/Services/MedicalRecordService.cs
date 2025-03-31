@@ -1,36 +1,34 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Services
 {
-    public class UserService :  IUserServices
+    public class MedicalRecordService : IMedicalRecordService
     {
         private readonly WebContext _db;
-        public UserService(WebContext db) 
+        public MedicalRecordService(WebContext db)
         {
             _db = db;
         }
 
-        public async Task<string> Create(Users model)
+        public async Task<string> Create(MedicalRecords model)
         {
             model.Id = Guid.NewGuid().ToString();
-            _db.Users!.Add(model);
+            _db.MedicalRecords!.Add(model);
             await _db.SaveChangesAsync();
             return model.Id.ToString();
         }
 
         public async Task<string> Delete(string id)
         {
-            var dellData = _db.Users!.SingleOrDefault(x => x.Id == id);
+            var dellData = _db.MedicalRecords!.SingleOrDefault(x => x.Id == id);
             if (dellData != null)
             {
-                _db.Users!.Remove(dellData);
+                _db.MedicalRecords!.Remove(dellData);
                 await _db.SaveChangesAsync();
-                return "Xoá thành công user có ID: " + id;
+                return "Xoá thành công MedicalRecord có ID: " + id;
             }
             else
             {
@@ -38,31 +36,30 @@ namespace prj_QLPKDK.Services
             }
         }
 
-        public async Task<List<Users>> GetAll()
+        public async Task<List<MedicalRecords>> GetAll()
         {
-            var datas = await _db.Users!.ToListAsync();
+            var datas = await _db.MedicalRecords!.ToListAsync();
             return datas;
         }
 
-        public async Task<Users> GetById(string id)
+        public async Task<MedicalRecords> GetById(string id)
         {
-            var data = _db.Users!.FirstOrDefault(x => x.Id == id);
+            var data = _db.MedicalRecords!.FirstOrDefault(x => x.Id == id);
             return data;
         }
 
-        public async Task<string> Update(string id, Users model)
+        public async Task<string> Update(string id, MedicalRecords model)
         {
             if (id == model.Id)
             {
-                _db.Users!.Update(model);
+                _db.MedicalRecords!.Update(model);
                 await _db.SaveChangesAsync();
-                return "Cập nhật thành công cho user có ID: " + id;
+                return "Cập nhật thành công cho MedicalRecord có ID: " + id;
             }
             else
             {
                 return "ID đưa vào không hợp lệ";
             }
         }
-
     }
 }
