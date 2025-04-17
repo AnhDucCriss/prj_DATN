@@ -1,4 +1,4 @@
-﻿namespace prj_QLPKDK.Models
+﻿namespace prj_QLPKDK.Models.Resquest
 {
     public class LoginRequestModel
     {

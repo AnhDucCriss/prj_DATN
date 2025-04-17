@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using prj_QLPKDK.Data;
-using prj_QLPKDK.Models;
+using prj_QLPKDK.Models.Response;
+using prj_QLPKDK.Models.Resquest;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -25,8 +26,10 @@ namespace prj_QLPKDK.Services
                 return null;
             }
             var UserAccount = await _context.Users.FirstOrDefaultAsync(x => x.Username == req.UserName);
-            if (UserAccount != null)
+           
+            if (UserAccount != null && UserAccount.Password == req.Password)
             {
+
                 var claims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub,_configuaration["JwtConfig:Subject"]),

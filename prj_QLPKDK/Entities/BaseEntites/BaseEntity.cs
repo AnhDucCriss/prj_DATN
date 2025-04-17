@@ -12,6 +12,7 @@ namespace prj_QLPKDK.Entities.BaseEntities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string LastModifyBy { get; set; } = string.Empty;
         public DateTime LastModifyAt { get; set; }
+        public bool IsActive { get; set; } = true;
 
     }
 }

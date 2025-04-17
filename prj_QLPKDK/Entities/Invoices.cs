@@ -1,21 +1,28 @@
 ﻿using prj_QLPKDK.Entities.BaseEntities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace   prj_QLPKDK.Entities
 {
     public class Invoices : BaseEntity
     {
-        public int PatientId { get; set; } // ID bệnh nhân
-        public int AppointmentId { get; set; } // ID lịch hẹn
+        [ForeignKey("Patient")]
+        public int PatientId { get; set; }
 
-        [Required]
-        public float TotalAmount { get; set; }
+        [ForeignKey("MedicalRecord")]
+        public int MedicalRecordId { get; set; }
 
-        [Required, StringLength(20)]
-        public string PaymentStatus { get; set; } = string.Empty; // Pending, Paid, Canceled
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmount { get; set; }
 
-        [Required, StringLength(20)]
-        public string PaymentMethod { get; set; } = string.Empty; // Cash, Card, Insurance
+        [MaxLength(50)]
+        public string PaymentMethod { get; set; }
+
+        [MaxLength(50)]
+        public string PaymentStatus { get; set; }
+
+        
+        
 
     }
 }

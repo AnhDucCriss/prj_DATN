@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using prj_QLPKDK.Models;
+using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services;
 
 namespace prj_QLPKDK.Controllers

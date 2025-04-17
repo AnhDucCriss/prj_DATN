@@ -1,28 +1,42 @@
 ﻿using prj_QLPKDK.Entities.BaseEntities;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace prj_QLPKDK.Entities
 {
     public class Patients : BaseEntity
     {
 
-        [Required, StringLength(100)]
-        public string FullName { get; set; } = string.Empty;
+        [Required, MaxLength(100)]
+        public string FullName { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
+        [MaxLength(10)]
+        public Gender Gender { get; set; }
 
-        [Required, StringLength(10)]
-        public string Gender { get; set; } = string.Empty; // Male, Female, Other
+        public int Age { get; set; }
 
-        [Phone, StringLength(15)]
-        public string PhoneNumber { get; set; } = string.Empty;
+        [MaxLength(15)]
+        public string Phone { get; set; }
 
-        [EmailAddress, StringLength(100)]
-        public string Email { get; set; } = string.Empty;
+        [MaxLength(255)]
+        public string Address { get; set; }
 
-        [StringLength(255)]
-        public string Address { get; set; } = string.Empty;
+        [MaxLength(100)]
+        public string Email { get; set; }
 
-        public string MedicalHistory { get; set; } = string.Empty; // Tiền sử bệnh án
+        public DateTime CreatedDate { get; set; }
+
+        public ICollection<MedicalRecords> MedicalRecords { get; set; }
+        public ICollection<Invoices> Invoices { get; set; }
+    }
+
+    public enum Gender
+    {
+        [EnumMember(Value = "Nam")]
+        Nam,
+
+        [EnumMember(Value = "Nữ")]
+        Nu,
+
     }
 }

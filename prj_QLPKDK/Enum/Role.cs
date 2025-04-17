@@ -4,16 +4,9 @@ namespace prj_QLPKDK.Enum
 {
     public enum Role
     {
-        [EnumMember(Value = "Doctor")]
-        Doctor,
-
-        [EnumMember(Value = "Nurse")]
-        Nurse,
-
-        [EnumMember(Value = "Technician")]
-        Technician,
-
-        [EnumMember(Value = "Admin")]
-        Admin
+        Admin = 0,
+        Doctor = 1,
+        Nurse = 2,
+        Accountant = 3
     }
 }

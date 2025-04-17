@@ -4,10 +4,21 @@ using System.ComponentModel.DataAnnotations;
 namespace prj_QLPKDK.Entities
 {
     public class Staffs : BaseEntity
-    { 
-        public int UserId { get; set; } // ID người dùng (không FK)
+    {
+        [Required, MaxLength(100)]
+        public string FullName { get; set; }
 
-        [Required, StringLength(50)]
-        public string Position { get; set; } = string.Empty;// Nurse, Receptionist, Cleaner
+        [Required, MaxLength(10)]
+        public Gender  Gender { get; set; }
+
+        [MaxLength(15)]
+        public string Phone { get; set; }
+
+        [MaxLength(100)]
+        public string Email { get; set; }
+
+        [MaxLength(50)]
+        public string Position { get; set; }
+
     }
 }

@@ -53,12 +53,12 @@ namespace prj_QLPKDK.Services
 
             // Cập nhật thông tin
             existingPatient.FullName = model.FullName;
-            existingPatient.DateOfBirth = model.DateOfBirth;
+            existingPatient.Age = model.Age;
             existingPatient.Email = model.Email;
             existingPatient.Gender = model.Gender;
             existingPatient.Address = model.Address;
-            existingPatient.PhoneNumber = model.PhoneNumber;
-            existingPatient.MedicalHistory = model.MedicalHistory;
+            existingPatient.Phone = model.Phone;
+            
 
             _db.Patients.Update(existingPatient);
             await _db.SaveChangesAsync();

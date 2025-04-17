@@ -1,15 +1,20 @@
 ﻿using prj_QLPKDK.Entities.BaseEntities;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace prj_QLPKDK.Entities
 {
     public class Prescriptions : BaseEntity
     {
-        public int AppointmentId { get; set; } // ID lịch hẹn
+        [ForeignKey("MedicalRecord")]
+        public int MedicalRecordId { get; set; }
 
-        [Required]
-        public string MedicationDetails { get; set; } = string.Empty;
+        [Column(TypeName = "decimal(18,2)")]
+        public float TotalAmount { get; set; }
 
-        public string Notes { get; set; } = string.Empty;   
+        public DateTime CreatedDate { get; set; }
+
+        public MedicalRecords MedicalRecord { get; set; }
+        public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
     }
 }

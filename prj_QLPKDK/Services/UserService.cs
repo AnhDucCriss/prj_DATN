@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Enum;
-using prj_QLPKDK.Models;
+using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Services
@@ -19,17 +19,22 @@ namespace prj_QLPKDK.Services
 
         public async Task<string> Create(UserRequestModel model)
         {
-            var user = new Users();
-            user.Username = model.Username;
-            user.Password = model.Password;
-            user.FullName = model.FullName;
-            user.Email = model.Email;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Role = model.Role;
-            _db.Users.Add(user);
+            var check = _db.Users.FirstOrDefault(x => x.Username == model.Username);
+            if(check == null)
+            {
+                var user = new Users();
+                user.Username = model.Username;
+                user.Password = model.Password;
+                user.Role = model.Role;
+                _db.Users.Add(user);
+
+                await _db.SaveChangesAsync();
+                return user.Id.ToString();
+            } else
+            {
+                return "Trùng username";
+            }
             
-            await _db.SaveChangesAsync();
-            return user.Id.ToString();
         }
 
         public async Task<string> Delete(int id)
@@ -37,9 +42,10 @@ namespace prj_QLPKDK.Services
             var dellData = _db.Users!.SingleOrDefault(x => x.Id == id);
             if (dellData != null)
             {
-                _db.Users!.Remove(dellData);
+                dellData.IsActive = false;
+                _db.Users.Remove(dellData);
                 await _db.SaveChangesAsync();
-                return "Xoá thành công user có ID: " + id;
+                return "Xoá thành công";
             }
             else
             {
@@ -56,30 +62,39 @@ namespace prj_QLPKDK.Services
         public async Task<Users> GetById(int id)
         {
             var data = _db.Users!.FirstOrDefault(x => x.Id == id);
+
             return data;
+        }
+
+        public async Task<List<Users>> GetByUserName(string name)
+        {
+            var dsUS = new List<Users>();
+            foreach(var item in _db.Users)
+            {
+                if(item.Username.Contains(name))
+                {
+                    dsUS.Add(item);
+                }
+            }
+
+            return dsUS;
         }
 
         public async Task<string> Update(int id, UserRequestModel model)
         {
 
-            var user = _db.Users.FirstOrDefault(x => x.Id == id);
-            
-            if (user != null)
+            var existingUser = await _db.Users.FindAsync(id);
+            if (existingUser == null)
             {
-                user.Username = model.Username;
-                user.Password = model.Password;
-                user.FullName = model.FullName;
-                user.Email = model.Email;
-                user.PhoneNumber = model.PhoneNumber;
-                //user.Role = model.Role;
-                _db.Users!.Update(user);
-                await _db.SaveChangesAsync();
-                return "Cập nhật thành công cho user có ID: " + id;
+                return $"Không tìm thấy user có id = {id}";
             }
-            else
-            {
-                return "ID đưa vào không hợp lệ";
-            }
+
+            existingUser.Username = model.Username;
+            existingUser.Password = model.Password;
+            existingUser.Role = model.Role;
+
+            await _db.SaveChangesAsync();
+            return "Cập nhật tài khoản thành công";
         }
 
     }

@@ -44,6 +44,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Thêm CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
 builder.Services.AddScoped<IUserServices, UserService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddSingleton<AuditInterceptor>();
@@ -79,9 +92,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAngularApp"); // 👈 Thêm dòng này trước UseAuthorization
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
