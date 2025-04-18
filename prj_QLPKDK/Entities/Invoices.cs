@@ -7,10 +7,10 @@ namespace   prj_QLPKDK.Entities
     public class Invoices : BaseEntity
     {
         [ForeignKey("Patient")]
-        public int PatientId { get; set; }
+        public Patients Patient { get; set; }
 
         [ForeignKey("MedicalRecord")]
-        public int MedicalRecordId { get; set; }
+        public MedicalRecords MedicalRecord { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services;
 
 namespace prj_QLPKDK.Controllers
@@ -47,7 +48,7 @@ namespace prj_QLPKDK.Controllers
         /// Thêm mới bệnh nhân
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<string>> Create([FromBody] Patients model)
+        public async Task<ActionResult<string>> Create([FromBody] PatientResquestModel model)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace prj_QLPKDK.Controllers
         /// Cập nhật bệnh nhân theo ID
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<string>> Update(int id, [FromBody] Patients model)
+        public async Task<ActionResult<string>> Update(int id, [FromBody] PatientResquestModel model)
         {
             try
             {

@@ -21,6 +21,6 @@ namespace prj_QLPKDK.Entities
         public string UsageInstructions { get; set; }
 
         public Prescriptions Prescription { get; set; }
-        public Medicines Medicine { get; set; }
+        public ICollection<Medicines> Medicines { get; set; }
     }
 }

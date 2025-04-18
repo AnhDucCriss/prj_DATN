@@ -2,7 +2,7 @@
 
 namespace prj_QLPKDK.Services.Abstraction
 {
-    public interface IMedicalRecordService : IBaseService<MedicalRecords>
+    public interface IMedicalRecordService
     {
     }
 }

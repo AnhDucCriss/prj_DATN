@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Services
@@ -13,56 +15,138 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> Create(Patients model)
+        public async Task<string> Create(PatientResquestModel model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model));
+                throw new ArgumentNullException(nameof(model), "Dữ liệu bệnh nhân không được để trống.");
 
-            
-            await _db.Patients.AddAsync(model);
+            // Kiểm tra các trường dữ liệu cần thiết có hợp lệ hay không
+            if (string.IsNullOrWhiteSpace(model.FullName) || string.IsNullOrWhiteSpace(model.Phone))
+                return "Tên và Số điện thoại là bắt buộc.";
+
+            // Kiểm tra email có hợp lệ không (optional)
+            if (!string.IsNullOrWhiteSpace(model.Email) && !Regex.IsMatch(model.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                return "Địa chỉ email không hợp lệ.";
+
+            // Tạo mới đối tượng bệnh nhân
+            var newPatient = new Patients
+            {
+                FullName = model.FullName,
+                Gender = model.Gender,
+                Age = model.Age,
+                Phone = model.Phone,
+                Address = model.Address,
+                Email = model.Email,
+                MedicalRecords = model.MedicalRecords,
+                Invoices = model.Invoices
+            };
+
+            // Thêm bệnh nhân mới vào cơ sở dữ liệu
+            _db.Patients.Add(newPatient);
             await _db.SaveChangesAsync();
-            return "aa";
+
+            return "Thêm bệnh nhân thành công";
         }
 
         public async Task<string> Delete(int id)
         {
             var patient = await _db.Patients.FindAsync(id);
-            if (patient == null)
-                throw new KeyNotFoundException("Patient not found");
 
+            // Kiểm tra xem bệnh nhân có tồn tại không
+            if (patient == null)
+                return "Không tìm thấy bệnh nhân.";
+
+            // Xóa bệnh nhân khỏi cơ sở dữ liệu
             _db.Patients.Remove(patient);
             await _db.SaveChangesAsync();
-            return id.ToString();
+
+            return "Xóa bệnh nhân thành công";
         }
 
         public async Task<List<Patients>> GetAll()
         {
-            return await _db.Patients.ToListAsync();
+            return await _db.Patients
+            .Include(p => p.MedicalRecords)
+            .Include(p => p.Invoices)
+            .AsNoTracking()
+            .ToListAsync();
         }
 
         public async Task<Patients> GetById(int id)
         {
-            return await _db.Patients.FindAsync(id);
+            var patient = await _db.Patients
+                           .Include(p => p.MedicalRecords)
+                           .Include(p => p.Invoices)
+                           .AsNoTracking()
+                           .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (patient == null)
+                throw new Exception($"Không tìm thấy bệnh nhân với ID = {id}");
+
+            return patient;
         }
 
-        public async Task<string> Update(int id, Patients model)
+        public async Task<List<Patients>> GetByName(string name)
         {
-            var existingPatient = await _db.Patients.FindAsync(id);
-            if (existingPatient == null)
-                throw new KeyNotFoundException("Patient not found");
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return new List<Patients>();  // Trả về danh sách rỗng nếu tên không hợp lệ
+            }
 
-            // Cập nhật thông tin
-            existingPatient.FullName = model.FullName;
-            existingPatient.Age = model.Age;
-            existingPatient.Email = model.Email;
-            existingPatient.Gender = model.Gender;
-            existingPatient.Address = model.Address;
-            existingPatient.Phone = model.Phone;
-            
+            // Lấy danh sách bệnh nhân với tên chứa chuỗi tìm kiếm
+            return await _db.Patients
+                            .Where(p => p.FullName.Contains(name))
+                            .Include(p => p.MedicalRecords)
+                            .Include(p => p.Invoices)
+                            .AsNoTracking()  // Tối ưu hóa khi không thay đổi dữ liệu
+                            .ToListAsync();
+        }
 
-            _db.Patients.Update(existingPatient);
+        public async Task<string> Update(int id, PatientResquestModel model)
+        {
+            if (model == null)
+                return "Dữ liệu cập nhật không được để trống.";
+
+            if (string.IsNullOrWhiteSpace(model.FullName) || string.IsNullOrWhiteSpace(model.Phone))
+                return "Tên và Số điện thoại là bắt buộc.";
+
+            if (!string.IsNullOrWhiteSpace(model.Email) &&
+                !Regex.IsMatch(model.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                return "Địa chỉ email không hợp lệ.";
+            }
+
+            // 2. Lấy bệnh nhân cần cập nhật
+            var patient = await _db.Patients
+                .Include(p => p.MedicalRecords)
+                .Include(p => p.Invoices)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (patient == null)
+                return $"Không tìm thấy bệnh nhân với ID = {id}";
+
+            // 3. Kiểm tra xem có gì thay đổi không
+            var isSame =
+                   patient.FullName == model.FullName
+                && patient.Gender == model.Gender
+                && patient.Age == model.Age
+                && patient.Phone == model.Phone
+                && patient.Address == model.Address
+                && patient.Email == model.Email;
+            if (isSame)
+                return "Không có thông tin nào thay đổi.";
+
+            // 4. Ánh xạ các trường cần cập nhật
+            patient.FullName = model.FullName;
+            patient.Gender = model.Gender;
+            patient.Age = model.Age;
+            patient.Phone = model.Phone;
+            patient.Address = model.Address;
+            patient.Email = model.Email;
+
+            // Lưu và trả về kết quả
             await _db.SaveChangesAsync();
-            return "d";
+            return "Cập nhật thông tin bệnh nhân thành công";
         }
     }
 }

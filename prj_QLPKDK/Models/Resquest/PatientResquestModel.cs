@@ -1,13 +1,10 @@
-﻿using prj_QLPKDK.Entities.BaseEntities;
+﻿using prj_QLPKDK.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
-namespace prj_QLPKDK.Entities
+namespace prj_QLPKDK.Models.Resquest
 {
-    public class Patients : BaseEntity
+    public class PatientResquestModel
     {
-
-        [Required, MaxLength(100)]
         public string FullName { get; set; }
 
         [MaxLength(10)]
@@ -25,15 +22,5 @@ namespace prj_QLPKDK.Entities
         public string Email { get; set; }
         public ICollection<MedicalRecords> MedicalRecords { get; set; }
         public ICollection<Invoices> Invoices { get; set; }
-    }
-
-    public enum Gender
-    {
-        [EnumMember(Value = "Nam")]
-        Nam,
-
-        [EnumMember(Value = "Nữ")]
-        Nu,
-
     }
 }
