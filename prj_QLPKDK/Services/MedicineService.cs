@@ -34,7 +34,7 @@ namespace prj_QLPKDK.Services
             return "Thêm thuốc thành công.";
         }
 
-        public async Task<string> UpdateAsync(int id, MedicineRequestModel model)
+        public async Task<string> UpdateAsync(string id, MedicineRequestModel model)
         {
             var medicine = await _db.Medicines.FindAsync(id);
             if (medicine == null)
@@ -50,7 +50,7 @@ namespace prj_QLPKDK.Services
             return "Cập nhật thuốc thành công.";
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(string id)
         {
             var medicine = await _db.Medicines.FindAsync(id);
             if (medicine == null)
@@ -61,7 +61,7 @@ namespace prj_QLPKDK.Services
             return "Xoá thuốc thành công.";
         }
 
-        public async Task<Medicines> GetByIdAsync(int id)
+        public async Task<Medicines> GetByIdAsync(string id)
         {
             return await _db.Medicines.FirstOrDefaultAsync(m => m.Id == id);
         }

@@ -26,7 +26,7 @@ namespace prj_QLPKDK.Controllers
 
        
         [HttpGet("get-by-id/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var result = await _staffService.GetByIdAsync(id);
             if (result == null)
@@ -47,22 +47,22 @@ namespace prj_QLPKDK.Controllers
         public async Task<IActionResult> Create([FromBody] StaffRequestModel model)
         {
             var result = await _staffService.CreateAsync(model);
-            return Ok(result);
+            return Ok(new { message = "Nhân viên đã được thêm thành công" });
         }
 
         
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] StaffRequestModel model)
+        public async Task<IActionResult> Update(string id, [FromBody] StaffRequestModel model)
         {
             var result = await _staffService.UpdateAsync(id, model);
-            return Ok(result);
+            return Ok(new { message = "Nhân viên đã được cập nhật thành công" });
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _staffService.DeleteAsync(id);
-            return Ok(result);
+            return Ok(new { message = "Nhân viên đã được xoá thành công" });
         }
     }
 }

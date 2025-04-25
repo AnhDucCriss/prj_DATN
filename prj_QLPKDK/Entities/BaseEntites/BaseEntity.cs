@@ -6,8 +6,7 @@ namespace prj_QLPKDK.Entities.BaseEntities
     public class BaseEntity
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; } 
+        public string Id { get; set; } = Guid.NewGuid().ToString(); 
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string LastModifyBy { get; set; } = string.Empty;

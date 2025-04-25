@@ -7,10 +7,10 @@ namespace prj_QLPKDK.Services.Abstraction
     { 
         Task<string> CreateAsync(InvoiceRequestModel model);
         Task<List<Invoices>> GetAllAsync();
-        Task<Invoices> GetByIdAsync(int id);
-        Task<List<Invoices>> GetByPatientIdAsync(int patientId);
-        Task<List<Invoices>> GetByMedicalRecordIdAsync(int medicalRecordId);
-        Task<string> UpdateAsync(int id, InvoiceRequestModel model);
-        Task<string> DeleteAsync(int id);
+        Task<Invoices> GetByIdAsync(string id);
+        
+        Task<List<Invoices>> GetByMedicalRecordIdAsync(string medicalRecordId);
+        Task<string> UpdateAsync(string id, InvoiceRequestModel model);
+        Task<string> DeleteAsync(string id);
     }
 }

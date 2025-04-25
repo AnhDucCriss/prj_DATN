@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services;
+using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Controllers
 {
@@ -10,9 +11,9 @@ namespace prj_QLPKDK.Controllers
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly PatientService _patientService;
+        private readonly IPatientService _patientService;
 
-        public PatientController(PatientService patientService)
+        public PatientController(IPatientService patientService)
         {
             _patientService = patientService;
         }
@@ -20,7 +21,7 @@ namespace prj_QLPKDK.Controllers
         /// <summary>
         /// Lấy danh sách tất cả bệnh nhân
         /// </summary>
-        [HttpGet]
+        [HttpGet("get-patients")]
         public async Task<ActionResult<List<Patients>>> GetAll()
         {
             var patients = await _patientService.GetAll();
@@ -30,8 +31,8 @@ namespace prj_QLPKDK.Controllers
         /// <summary>
         /// Lấy thông tin bệnh nhân theo ID
         /// </summary>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Patients>> GetById(int id)
+        [HttpGet("get-patient-by-id/{id}")]
+        public async Task<ActionResult<Patients>> GetById(string id)
         {
             try
             {
@@ -44,10 +45,22 @@ namespace prj_QLPKDK.Controllers
             }
         }
 
+        [HttpGet("get-medicalrecords/{patientId}")]
+        public async Task<IActionResult> GetByPatientId(string patientId)
+        {
+            var records = await _patientService.GetListMC(patientId);
+
+            if (records == null || !records.Any())
+            {
+                return Ok(new { message = "Bệnh nhân chưa có hồ sơ khám bệnh trên hệ thống" });
+            }
+
+            return Ok(records);
+        }
         /// <summary>
         /// Thêm mới bệnh nhân
         /// </summary>
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<string>> Create([FromBody] PatientResquestModel model)
         {
             try
@@ -64,8 +77,8 @@ namespace prj_QLPKDK.Controllers
         /// <summary>
         /// Cập nhật bệnh nhân theo ID
         /// </summary>
-        [HttpPut("{id}")]
-        public async Task<ActionResult<string>> Update(int id, [FromBody] PatientResquestModel model)
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<string>> Update(string id, [FromBody] PatientResquestModel model)
         {
             try
             {
@@ -81,8 +94,8 @@ namespace prj_QLPKDK.Controllers
         /// <summary>
         /// Xóa bệnh nhân theo ID
         /// </summary>
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<string>> Delete(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult<string>> Delete(string id)
         {
             try
             {

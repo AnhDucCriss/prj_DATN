@@ -43,11 +43,11 @@ namespace prj_QLPKDK.Services
             await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
 
-            return user.Id.ToString();
+            return user.Id;
 
         }
 
-        public async Task<string> Delete(int id)
+        public async Task<string> Delete(string id)
         {
             var user = await _db.Users.SingleOrDefaultAsync(x => x.Id == id);
             if (user == null)
@@ -58,7 +58,7 @@ namespace prj_QLPKDK.Services
             user.IsActive = false;
 
             // Không cần phải Remove nếu chỉ cần đánh dấu là không hoạt động
-            _db.Users.Update(user); // Cập nhật entity thay vì xóa
+            _db.Users.Remove(user); // Cập nhật entity thay vì xóa
 
             await _db.SaveChangesAsync();
             return "Xoá thành công";
@@ -66,11 +66,11 @@ namespace prj_QLPKDK.Services
 
         public async Task<List<Users>> GetAll()
         {
-            var datas = await _db.Users!.ToListAsync();
+            var datas = await _db.Users!.Where(x => x.IsActive == true).ToListAsync();
             return datas;
         }
 
-        public async Task<Users> GetById(int id)
+        public async Task<Users> GetById(string id)
         {
             var user = await _db.Users
                         .FirstOrDefaultAsync(x => x.Id == id);
@@ -94,7 +94,7 @@ namespace prj_QLPKDK.Services
             return users;
         }
 
-        public async Task<string> Update(int id, UserRequestModel model)
+        public async Task<string> Update(string id, UserRequestModel model)
         {
 
             // Tìm người dùng theo id trong cơ sở dữ liệu

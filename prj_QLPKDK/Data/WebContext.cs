@@ -11,8 +11,7 @@ namespace prj_QLPKDK.Data
             
         }
         #region
-        
-        public DbSet<Departments> Departments { get; set; } //Khoa/Phòng ban
+       
      
         public DbSet<Invoices> Invoices { get; set; } //Hoá đơn
         public DbSet<MedicalRecords> MedicalRecords { get; set; } //Hồ sơ bệnh án

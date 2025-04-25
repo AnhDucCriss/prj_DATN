@@ -7,14 +7,10 @@ namespace prj_QLPKDK.Entities
     public class Prescriptions : BaseEntity
     {
         [ForeignKey("MedicalRecord")]
-        public int MedicalRecordId { get; set; }
-
+        public string MedicalRecordId { get; set; } 
+        public MedicalRecords MedicalRecord { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public float TotalAmount { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
-        public MedicalRecords MedicalRecord { get; set; }
-        public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
+        public List<PrescriptionDetails> PrescriptionDetails { get; set; }
     }
 }

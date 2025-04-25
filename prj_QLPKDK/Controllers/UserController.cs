@@ -31,7 +31,7 @@ namespace prj_QLPKDK.Controllers
 
         }
         [HttpGet("get-user-by-id/{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var User = await _service.GetById(id);
             
@@ -50,11 +50,11 @@ namespace prj_QLPKDK.Controllers
         public async Task<IActionResult> AddUserAsync([FromBody] UserRequestModel model)
         {
             var newUser = await _service.Create(model);
-            return Ok(newUser);
+            return Ok(new { message = "Tài khoản đã được thêm thành công" });
 
         }
         [HttpPut("update-user/{id}")]
-        public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserRequestModel model)
+        public async Task<IActionResult> UpdateUserAsync(string id, [FromBody] UserRequestModel model)
         {
             var newUser = await _service.Update(id, model);
 
@@ -62,7 +62,7 @@ namespace prj_QLPKDK.Controllers
 
         }
         [HttpDelete("delete-user/{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             var delUser = await _service.Delete(id);
             

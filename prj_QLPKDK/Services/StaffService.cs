@@ -34,7 +34,7 @@ namespace prj_QLPKDK.Services
             return "Thêm nhân viên thành công.";
         }
 
-        public async Task<string> UpdateAsync(int id, StaffRequestModel model)
+        public async Task<string> UpdateAsync(string id, StaffRequestModel model)
         {
             var staff = await _db.Staffs.FindAsync(id);
             if (staff == null)
@@ -50,7 +50,7 @@ namespace prj_QLPKDK.Services
             return "Cập nhật nhân viên thành công.";
         }
 
-        public async Task<string> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(string id)
         {
             var staff = await _db.Staffs.FindAsync(id);
             if (staff == null)
@@ -61,7 +61,7 @@ namespace prj_QLPKDK.Services
             return "Xoá nhân viên thành công.";
         }
 
-        public async Task<Staffs> GetByIdAsync(int id)
+        public async Task<Staffs> GetByIdAsync(string id)
         {
             return await _db.Staffs.FirstOrDefaultAsync(s => s.Id == id);
         }

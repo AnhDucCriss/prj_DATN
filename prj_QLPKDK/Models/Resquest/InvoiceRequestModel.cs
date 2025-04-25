@@ -4,8 +4,8 @@ namespace prj_QLPKDK.Models.Resquest
 {
     public class InvoiceRequestModel
     {
-        public int PatientId { get; set; }
-        public int MedicalRecordId { get; set; }
+        public string PatientId { get; set; }
+        public string MedicalRecordId { get; set; }
 
         [Range(0.01, double.MaxValue, ErrorMessage = "Tổng tiền phải lớn hơn 0.")]
         public decimal TotalAmount { get; set; }

@@ -24,7 +24,7 @@ namespace prj_QLPKDK.Entities
         [MaxLength(100)]
         public string Email { get; set; }
         public ICollection<MedicalRecords> MedicalRecords { get; set; }
-        public ICollection<Invoices> Invoices { get; set; }
+       
     }
 
     public enum Gender

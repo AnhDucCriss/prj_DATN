@@ -26,7 +26,7 @@ namespace prj_QLPKDK.Controllers
 
         // GET: api/Medicine/5
         [HttpGet("get-by-id/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
             var result = await _medicineService.GetByIdAsync(id);
             if (result == null)
@@ -52,7 +52,7 @@ namespace prj_QLPKDK.Controllers
 
         // PUT: api/Medicine/5
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] MedicineRequestModel model)
+        public async Task<IActionResult> Update(string id, [FromBody] MedicineRequestModel model)
         {
             var result = await _medicineService.UpdateAsync(id, model);
             return Ok(result);
@@ -60,7 +60,7 @@ namespace prj_QLPKDK.Controllers
 
         // DELETE: api/Medicine/5
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _medicineService.DeleteAsync(id);
             return Ok(result);

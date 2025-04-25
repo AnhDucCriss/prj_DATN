@@ -38,42 +38,33 @@ namespace prj_QLPKDK.Services
         public async Task<List<Invoices>> GetAllAsync()
         {
             return await _db.Invoices
-                             .Include(i => i.Patient)
+                             
                              .Include(i => i.MedicalRecord)
                              .ToListAsync();
         }
 
         // Lấy hóa đơn theo ID
-        public async Task<Invoices> GetByIdAsync(int id)
+        public async Task<Invoices> GetByIdAsync(string id)
         {
             return await _db.Invoices
-                             .Include(i => i.Patient)
                              .Include(i => i.MedicalRecord)
                              .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         // Lấy hóa đơn theo ID bệnh nhân
-        public async Task<List<Invoices>> GetByPatientIdAsync(int patientId)
-        {
-            return await _db.Invoices
-                             .Where(i => i.Patient.Id == patientId)
-                             .Include(i => i.Patient)
-                             .Include(i => i.MedicalRecord)
-                             .ToListAsync();
-        }
+        
 
         // Lấy hóa đơn theo ID hồ sơ bệnh án
-        public async Task<List<Invoices>> GetByMedicalRecordIdAsync(int medicalRecordId)
+        public async Task<List<Invoices>> GetByMedicalRecordIdAsync(string medicalRecordId)
         {
             return await _db.Invoices
                              .Where(i => i.MedicalRecord.Id == medicalRecordId)
-                             .Include(i => i.Patient)
                              .Include(i => i.MedicalRecord)
                              .ToListAsync();
         }
 
         // Cập nhật hóa đơn
-        public async Task<string> UpdateAsync(int id, InvoiceRequestModel model)
+        public async Task<string> UpdateAsync(string id, InvoiceRequestModel model)
         {
             var invoice = await _db.Invoices.FindAsync(id);
 
@@ -81,7 +72,7 @@ namespace prj_QLPKDK.Services
                 return "Không tìm thấy hóa đơn với ID = " + id;
 
             // Kiểm tra và cập nhật các trường của hóa đơn
-            invoice.Patient.Id = model.PatientId;
+            
             invoice.MedicalRecord.Id = model.MedicalRecordId;
             invoice.TotalAmount = model.TotalAmount;
             invoice.PaymentMethod = model.PaymentMethod;
@@ -93,7 +84,7 @@ namespace prj_QLPKDK.Services
         }
 
         // Xóa hóa đơn
-        public async Task<string> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(string id)
         {
             var invoice = await _db.Invoices.FindAsync(id);
 

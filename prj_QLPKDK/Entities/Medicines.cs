@@ -21,6 +21,5 @@ namespace prj_QLPKDK.Entities
         [MaxLength(50)]
         public string Category { get; set; }
 
-        public ICollection<PrescriptionDetails> PrescriptionDetails { get; set; }
     }
 }

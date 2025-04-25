@@ -6,10 +6,8 @@ namespace   prj_QLPKDK.Entities
 {
     public class Invoices : BaseEntity
     {
-        [ForeignKey("Patient")]
-        public Patients Patient { get; set; }
-
-        [ForeignKey("MedicalRecord")]
+        [ForeignKey("MedicalRecordId")]
+        public string MedicalRecordId { get; set; }
         public MedicalRecords MedicalRecord { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

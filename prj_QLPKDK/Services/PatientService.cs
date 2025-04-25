@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
@@ -38,7 +39,7 @@ namespace prj_QLPKDK.Services
                 Address = model.Address,
                 Email = model.Email,
                 MedicalRecords = model.MedicalRecords,
-                Invoices = model.Invoices
+           
             };
 
             // Thêm bệnh nhân mới vào cơ sở dữ liệu
@@ -48,7 +49,7 @@ namespace prj_QLPKDK.Services
             return "Thêm bệnh nhân thành công";
         }
 
-        public async Task<string> Delete(int id)
+        public async Task<string> Delete(string id)
         {
             var patient = await _db.Patients.FindAsync(id);
 
@@ -67,16 +68,16 @@ namespace prj_QLPKDK.Services
         {
             return await _db.Patients
             .Include(p => p.MedicalRecords)
-            .Include(p => p.Invoices)
+            
             .AsNoTracking()
             .ToListAsync();
         }
 
-        public async Task<Patients> GetById(int id)
+        public async Task<Patients> GetById(string id)
         {
             var patient = await _db.Patients
                            .Include(p => p.MedicalRecords)
-                           .Include(p => p.Invoices)
+                           
                            .AsNoTracking()
                            .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -97,12 +98,18 @@ namespace prj_QLPKDK.Services
             return await _db.Patients
                             .Where(p => p.FullName.Contains(name))
                             .Include(p => p.MedicalRecords)
-                            .Include(p => p.Invoices)
                             .AsNoTracking()  // Tối ưu hóa khi không thay đổi dữ liệu
                             .ToListAsync();
         }
 
-        public async Task<string> Update(int id, PatientResquestModel model)
+        public async Task<List<MedicalRecords>> GetListMC(string id)
+        {
+            return await _db.MedicalRecords
+                           .Where(x => x.PatientId == id)
+                           .ToListAsync();
+        }
+
+        public async Task<string> Update(string id, PatientResquestModel model)
         {
             if (model == null)
                 return "Dữ liệu cập nhật không được để trống.";
@@ -119,7 +126,6 @@ namespace prj_QLPKDK.Services
             // 2. Lấy bệnh nhân cần cập nhật
             var patient = await _db.Patients
                 .Include(p => p.MedicalRecords)
-                .Include(p => p.Invoices)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (patient == null)

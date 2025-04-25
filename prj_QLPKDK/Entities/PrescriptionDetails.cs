@@ -7,10 +7,10 @@ namespace prj_QLPKDK.Entities
     public class PrescriptionDetails : BaseEntity
     {
         [ForeignKey("Prescription")]
-        public int PrescriptionId { get; set; }
+        public string PrescriptionId { get; set; }
 
         [ForeignKey("Medicine")]
-        public int MedicineId { get; set; }
+        public string MedicineId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -19,8 +19,7 @@ namespace prj_QLPKDK.Entities
 
         [MaxLength(255)]
         public string UsageInstructions { get; set; }
-
-        public Prescriptions Prescription { get; set; }
-        public ICollection<Medicines> Medicines { get; set; }
+        
+        public Medicines Medicine { get; set; }
     }
 }

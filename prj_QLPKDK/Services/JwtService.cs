@@ -35,7 +35,7 @@ namespace prj_QLPKDK.Services
                     new Claim(JwtRegisteredClaimNames.Sub,_configuaration["JwtConfig:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim("UserName",req.UserName.ToString()),
-                    new Claim(ClaimTypes.Role,UserAccount.Role.ToString())
+                    new Claim(ClaimTypes.Role, UserAccount.Role.ToString())
                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuaration["JwtConfig:Key"]));
                 var tokenValidityMins = _configuaration.GetValue<int>("JwtConfig:TokenValidityMins");

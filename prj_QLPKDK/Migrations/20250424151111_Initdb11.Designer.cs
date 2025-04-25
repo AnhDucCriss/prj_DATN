@@ -12,8 +12,8 @@ using prj_QLPKDK.Data;
 namespace prj_QLPKDK.Migrations
 {
     [DbContext(typeof(WebContext))]
-    [Migration("20250412060154_Initdb2")]
-    partial class Initdb2
+    [Migration("20250424151111_Initdb11")]
+    partial class Initdb11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,51 +25,10 @@ namespace prj_QLPKDK.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("prj_QLPKDK.Entities.Departments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModifyAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifyBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Departments");
-                });
-
             modelBuilder.Entity("prj_QLPKDK.Entities.Invoices", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -88,14 +47,9 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MedicalRecordId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PatientsId")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicalRecordId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -112,18 +66,16 @@ namespace prj_QLPKDK.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientsId");
+                    b.HasIndex("MedicalRecordId")
+                        .IsUnique();
 
                     b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("prj_QLPKDK.Entities.MedicalRecords", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Conclusion")
                         .IsRequired()
@@ -145,9 +97,6 @@ namespace prj_QLPKDK.Migrations
                     b.Property<DateTime>("ExaminationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -158,8 +107,9 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Symptoms")
                         .IsRequired()
@@ -168,8 +118,6 @@ namespace prj_QLPKDK.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InvoiceId");
-
                     b.HasIndex("PatientId");
 
                     b.ToTable("MedicalRecords");
@@ -177,11 +125,8 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Medicines", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -230,11 +175,8 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Patients", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -251,9 +193,6 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -264,10 +203,9 @@ namespace prj_QLPKDK.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
+                    b.Property<int>("Gender")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -291,11 +229,8 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.PrescriptionDetails", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -319,11 +254,16 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MedicineId")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicineId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("PrescriptionId")
-                        .HasColumnType("int");
+                    b.Property<string>("PrescriptionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PrescriptionsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -337,18 +277,15 @@ namespace prj_QLPKDK.Migrations
 
                     b.HasIndex("MedicineId");
 
-                    b.HasIndex("PrescriptionId");
+                    b.HasIndex("PrescriptionsId");
 
                     b.ToTable("PrescriptionDetails");
                 });
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Prescriptions", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -356,9 +293,6 @@ namespace prj_QLPKDK.Migrations
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -370,8 +304,9 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MedicalRecordId")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicalRecordId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
@@ -386,11 +321,8 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Staffs", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -409,10 +341,9 @@ namespace prj_QLPKDK.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
+                    b.Property<int>("Gender")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -441,11 +372,8 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Users", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -482,26 +410,22 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Invoices", b =>
                 {
-                    b.HasOne("prj_QLPKDK.Entities.Patients", null)
-                        .WithMany("Invoices")
-                        .HasForeignKey("PatientsId");
+                    b.HasOne("prj_QLPKDK.Entities.MedicalRecords", "MedicalRecord")
+                        .WithOne("Invoice")
+                        .HasForeignKey("prj_QLPKDK.Entities.Invoices", "MedicalRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
                 });
 
             modelBuilder.Entity("prj_QLPKDK.Entities.MedicalRecords", b =>
                 {
-                    b.HasOne("prj_QLPKDK.Entities.Invoices", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("prj_QLPKDK.Entities.Patients", "Patient")
                         .WithMany("MedicalRecords")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Invoice");
 
                     b.Navigation("Patient");
                 });
@@ -509,20 +433,16 @@ namespace prj_QLPKDK.Migrations
             modelBuilder.Entity("prj_QLPKDK.Entities.PrescriptionDetails", b =>
                 {
                     b.HasOne("prj_QLPKDK.Entities.Medicines", "Medicine")
-                        .WithMany("PrescriptionDetails")
+                        .WithMany()
                         .HasForeignKey("MedicineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("prj_QLPKDK.Entities.Prescriptions", "Prescription")
+                    b.HasOne("prj_QLPKDK.Entities.Prescriptions", null)
                         .WithMany("PrescriptionDetails")
-                        .HasForeignKey("PrescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PrescriptionsId");
 
                     b.Navigation("Medicine");
-
-                    b.Navigation("Prescription");
                 });
 
             modelBuilder.Entity("prj_QLPKDK.Entities.Prescriptions", b =>
@@ -538,19 +458,15 @@ namespace prj_QLPKDK.Migrations
 
             modelBuilder.Entity("prj_QLPKDK.Entities.MedicalRecords", b =>
                 {
+                    b.Navigation("Invoice")
+                        .IsRequired();
+
                     b.Navigation("Prescription")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("prj_QLPKDK.Entities.Medicines", b =>
-                {
-                    b.Navigation("PrescriptionDetails");
-                });
-
             modelBuilder.Entity("prj_QLPKDK.Entities.Patients", b =>
                 {
-                    b.Navigation("Invoices");
-
                     b.Navigation("MedicalRecords");
                 });
 

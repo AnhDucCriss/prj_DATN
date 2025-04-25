@@ -56,8 +56,13 @@ builder.Services.AddCors(options =>
         });
 });
 
-
+//addservice
 builder.Services.AddScoped<IUserServices, UserService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IMedicineService, MedicineService>();
+builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddSingleton<AuditInterceptor>();
 
