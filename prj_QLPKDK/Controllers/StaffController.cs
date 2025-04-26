@@ -36,7 +36,7 @@ namespace prj_QLPKDK.Controllers
 
         
         [HttpGet("search/{name}")]
-        public async Task<IActionResult> GetByName([FromQuery] string name)
+        public async Task<IActionResult> GetByName(string name)
         {
             var result = await _staffService.GetByNameAsync(name);
             return Ok(result);

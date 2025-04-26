@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -71,8 +72,9 @@ namespace prj_QLPKDK.Services
             return await _db.Staffs.ToListAsync();
         }
 
-        public async Task<List<Staffs>> GetByNameAsync(string name)
+        public async Task<List<Staffs>> GetByNameAsync(StaffFilterResquest filter)
         {
+
             return await _db.Staffs
                 .Where(s => s.FullName.Contains(name))
                 .ToListAsync();

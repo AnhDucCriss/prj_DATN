@@ -1,4 +1,5 @@
 ﻿using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 
 namespace prj_QLPKDK.Services.Abstraction
@@ -10,6 +11,6 @@ namespace prj_QLPKDK.Services.Abstraction
         Task<string> DeleteAsync(string id);
         Task<Staffs> GetByIdAsync(string id);
         Task<List<Staffs>> GetAllAsync();
-        Task<List<Staffs>> GetByNameAsync(string name);
+        Task<List<Staffs>> GetByNameAsync(StaffFilterResquest name);
     }
 }
