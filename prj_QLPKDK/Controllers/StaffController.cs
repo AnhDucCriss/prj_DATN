@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -18,13 +19,13 @@ namespace prj_QLPKDK.Controllers
 
        
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetStaffs([FromQuery] PagedQuery query)
         {
-            var result = await _staffService.GetAllAsync();
+            var result = await _staffService.GetAllAsync(query);
             return Ok(result);
         }
 
-       
+
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -34,15 +35,17 @@ namespace prj_QLPKDK.Controllers
             return Ok(result);
         }
 
-        
-        [HttpGet("search/{name}")]
-        public async Task<IActionResult> GetByName(string name)
+
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchStaffs([FromBody] StaffFilterResquest request)
         {
-            var result = await _staffService.GetByNameAsync(name);
+            var result = await _staffService.GetByNameAsync(request);
             return Ok(result);
         }
 
-        
+
+
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] StaffRequestModel model)
         {

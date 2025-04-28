@@ -67,17 +67,68 @@ namespace prj_QLPKDK.Services
             return await _db.Staffs.FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<List<Staffs>> GetAllAsync()
+        public async Task<PagedResult<Staffs>> GetAllAsync(PagedQuery query)
         {
-            return await _db.Staffs.ToListAsync();
-        }
+            const int pageSize = 10; // Luôn cố định 10 bản ghi
 
-        public async Task<List<Staffs>> GetByNameAsync(StaffFilterResquest filter)
-        {
+            int pageNumber = query.PageNumber <= 0 ? 1 : query.PageNumber;
 
-            return await _db.Staffs
-                .Where(s => s.FullName.Contains(name))
+            var staffsQuery = _db.Staffs.AsQueryable();
+
+            var totalRecords = await staffsQuery.CountAsync();
+
+            var staffs = await staffsQuery
+                .OrderBy(x => x.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedResult<Staffs>
+            {
+                Items = staffs,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
+
+
+
+        public async Task<PagedResult<Staffs>> GetByNameAsync(StaffFilterResquest request)
+        {
+            const int pageSize = 10; // Luôn cố định 10 bản ghi
+
+            int pageNumber = request.PageNumber <= 0 ? 1 : request.PageNumber;
+
+            var query = _db.Staffs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                query = query.Where(s => s.FullName.Contains(request.Name));
+            }
+
+            if (!string.IsNullOrEmpty(request.Position))
+            {
+                query = query.Where(s => s.Position.Contains(request.Position));
+            }
+
+            var totalRecords = await query.CountAsync();
+
+            var staffs = await query
+                .OrderBy(s => s.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Staffs>
+            {
+                Items = staffs,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+
     }
 }

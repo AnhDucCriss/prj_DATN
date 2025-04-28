@@ -10,7 +10,7 @@ namespace prj_QLPKDK.Services.Abstraction
         Task<string> UpdateAsync(string id, StaffRequestModel model);
         Task<string> DeleteAsync(string id);
         Task<Staffs> GetByIdAsync(string id);
-        Task<List<Staffs>> GetAllAsync();
-        Task<List<Staffs>> GetByNameAsync(StaffFilterResquest name);
+        Task<PagedResult<Staffs>> GetAllAsync(PagedQuery query);
+        Task<PagedResult<Staffs>> GetByNameAsync(StaffFilterResquest request);
     }
 }
