@@ -8,7 +8,7 @@ namespace prj_QLPKDK.Entities
     {
 
         [Required, MaxLength(100)]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [MaxLength(10)]
         public Gender Gender { get; set; }
@@ -16,13 +16,13 @@ namespace prj_QLPKDK.Entities
         public int Age { get; set; }
 
         [MaxLength(15)]
-        public string Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         [MaxLength(255)]
-        public string Address { get; set; }
+        public string Address { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public ICollection<MedicalRecords> MedicalRecords { get; set; }
        
     }

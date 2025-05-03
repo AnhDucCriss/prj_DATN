@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -7,6 +9,7 @@ namespace prj_QLPKDK.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MedicineController : ControllerBase
     {
         private readonly IMedicineService _medicineService;
@@ -17,10 +20,10 @@ namespace prj_QLPKDK.Controllers
         }
 
         // GET: api/Medicine
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll()
+        [HttpPost("get-all")]
+        public async Task<IActionResult> GetAll([FromBody] PagedQuery query)
         {
-            var result = await _medicineService.GetAllAsync();
+            var result = await _medicineService.GetAllAsync(query);
             return Ok(result);
         }
 
@@ -34,11 +37,10 @@ namespace prj_QLPKDK.Controllers
             return Ok(result);
         }
 
-        // GET: api/Medicine/search?name=paracetamol
-        [HttpGet("search/{name}")]
-        public async Task<IActionResult> GetByName([FromQuery] string name)
+        [HttpPost("search")]
+        public async Task<IActionResult> GetByName([FromBody] MedicineFilter filter)
         {
-            var result = await _medicineService.GetByNameAsync(name);
+            var result = await _medicineService.SearchMedicine(filter);
             return Ok(result);
         }
 
@@ -46,24 +48,35 @@ namespace prj_QLPKDK.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] MedicineRequestModel model)
         {
-            var result = await _medicineService.CreateAsync(model);
-            return Ok(result);
+            var isCreated = await _medicineService.CreateAsync(model);
+
+            if (!isCreated)
+                return BadRequest(new { message = "Dữ liệu thuốc không hợp lệ." });
+
+            return Ok(new { message = "Thêm thuốc thành công." });
         }
 
         // PUT: api/Medicine/5
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] MedicineRequestModel model)
         {
-            var result = await _medicineService.UpdateAsync(id, model);
-            return Ok(result);
+            var isUpdated = await _medicineService.UpdateAsync(id, model);
+
+            if (!isUpdated)
+                return NotFound(new { message = "Không tìm thấy thuốc." });
+
+            return Ok(new { message = "Cập nhật thuốc thành công." });
         }
 
         // DELETE: api/Medicine/5
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var result = await _medicineService.DeleteAsync(id);
-            return Ok(result);
+            var isDeleted = await _medicineService.DeleteAsync(id);
+            if (!isDeleted)
+                return NotFound(new { message = "Không tìm thấy thuốc." });
+
+            return Ok(new { message = "Xoá thuốc thành công." });
         }
     }
 }

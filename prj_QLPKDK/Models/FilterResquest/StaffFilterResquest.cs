@@ -7,8 +7,8 @@ namespace prj_QLPKDK.Models.FilterResquest
 {
     public class StaffFilterResquest 
     {
-        public string? Name { get; set; }
-        public string? Position { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Position { get; set; } = string.Empty;
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
 

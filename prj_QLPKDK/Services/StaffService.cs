@@ -16,10 +16,10 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> CreateAsync(StaffRequestModel model)
+        public async Task<bool> CreateAsync(StaffRequestModel model)
         {
             if (model == null)
-                return "Dữ liệu nhân viên không hợp lệ.";
+                return false;
 
             var newStaff = new Staffs
             {
@@ -32,14 +32,14 @@ namespace prj_QLPKDK.Services
 
             _db.Staffs.Add(newStaff);
             await _db.SaveChangesAsync();
-            return "Thêm nhân viên thành công.";
+            return true;
         }
 
-        public async Task<string> UpdateAsync(string id, StaffRequestModel model)
+        public async Task<bool> UpdateAsync(string id, StaffRequestModel model)
         {
             var staff = await _db.Staffs.FindAsync(id);
             if (staff == null)
-                return $"Không tìm thấy nhân viên có id = {id}";
+                return false;
 
             staff.FullName = model.FullName;
             staff.Gender = model.Gender;
@@ -48,18 +48,18 @@ namespace prj_QLPKDK.Services
             staff.Position = model.Position;
 
             await _db.SaveChangesAsync();
-            return "Cập nhật nhân viên thành công.";
+            return true;
         }
 
-        public async Task<string> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var staff = await _db.Staffs.FindAsync(id);
             if (staff == null)
-                return "Không tìm thấy nhân viên.";
+                return false;
 
             _db.Staffs.Remove(staff);
             await _db.SaveChangesAsync();
-            return "Xoá nhân viên thành công.";
+            return true;
         }
 
         public async Task<Staffs> GetByIdAsync(string id)

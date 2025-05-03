@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -15,12 +16,12 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> CreateAsync(MedicineRequestModel model)
+        public async Task<bool> CreateAsync(MedicineRequestModel model)
         {
             if (model == null)
-                return "Dữ liệu thuốc không hợp lệ.";
+                return false;
 
-            var medicine = new Medicines
+            var newMedicine = new Medicines
             {
                 MedicineName = model.MedicineName,
                 Unit = model.Unit,
@@ -29,16 +30,17 @@ namespace prj_QLPKDK.Services
                 Category = model.Category
             };
 
-            _db.Medicines.Add(medicine);
+            _db.Medicines.Add(newMedicine);
             await _db.SaveChangesAsync();
-            return "Thêm thuốc thành công.";
+          
+            return true;
         }
 
-        public async Task<string> UpdateAsync(string id, MedicineRequestModel model)
+        public async Task<bool> UpdateAsync(string id, MedicineRequestModel model)
         {
             var medicine = await _db.Medicines.FindAsync(id);
             if (medicine == null)
-                return $"Không tìm thấy thuốc có ID = {id}";
+                return false;
 
             medicine.MedicineName = model.MedicineName;
             medicine.Unit = model.Unit;
@@ -47,18 +49,18 @@ namespace prj_QLPKDK.Services
             medicine.Category = model.Category;
 
             await _db.SaveChangesAsync();
-            return "Cập nhật thuốc thành công.";
+            return true;
         }
 
-        public async Task<string> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var medicine = await _db.Medicines.FindAsync(id);
             if (medicine == null)
-                return "Không tìm thấy thuốc.";
+                return false;
 
             _db.Medicines.Remove(medicine);
             await _db.SaveChangesAsync();
-            return "Xoá thuốc thành công.";
+            return true;
         }
 
         public async Task<Medicines> GetByIdAsync(string id)
@@ -66,16 +68,59 @@ namespace prj_QLPKDK.Services
             return await _db.Medicines.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<List<Medicines>> GetAllAsync()
+        public async Task<PagedResult<Medicines>> GetAllAsync(PagedQuery query)
         {
-            return await _db.Medicines.ToListAsync();
+            const int pageSize = 10;
+            int pageNumber = query.PageNumber <= 0 ? 1 : query.PageNumber;
+
+            var queryable = _db.Medicines.AsQueryable();
+            var totalRecords = await queryable.CountAsync();
+
+            var medicines = await queryable
+                .OrderBy(m => m.MedicineName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Medicines>
+            {
+                Items = medicines,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
-        public async Task<List<Medicines>> GetByNameAsync(string name)
+        public async Task<PagedResult<Medicines>> SearchMedicine(MedicineFilter request)
         {
-            return await _db.Medicines
-                .Where(m => m.MedicineName.Contains(name))
+            var query = _db.Medicines.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.MedicineName))
+            {
+                query = query.Where(m => m.MedicineName.Contains(request.MedicineName));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Category))
+            {
+                query = query.Where(m => m.Category.Contains(request.Category));
+            }
+
+            var totalRecords = await query.CountAsync();
+
+            var medicines = await query
+                .OrderBy(m => m.MedicineName)
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .ToListAsync();
+
+            return new PagedResult<Medicines>
+            {
+                Items = medicines,
+                TotalRecords = totalRecords,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize
+            };
         }
+
     }
 }

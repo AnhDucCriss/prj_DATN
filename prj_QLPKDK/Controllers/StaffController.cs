@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
@@ -8,6 +10,7 @@ namespace prj_QLPKDK.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StaffController : ControllerBase
     {
         private readonly IStaffService _staffService;
@@ -50,7 +53,10 @@ namespace prj_QLPKDK.Controllers
         public async Task<IActionResult> Create([FromBody] StaffRequestModel model)
         {
             var result = await _staffService.CreateAsync(model);
-            return Ok(new { message = "Nhân viên đã được thêm thành công" });
+            if (!result)
+                return BadRequest(new { message = "Dữ liệu nhân viên không hợp lệ." });
+
+            return Ok(new { message = "Thêm nhân viên thành công." });
         }
 
         
@@ -58,14 +64,20 @@ namespace prj_QLPKDK.Controllers
         public async Task<IActionResult> Update(string id, [FromBody] StaffRequestModel model)
         {
             var result = await _staffService.UpdateAsync(id, model);
-            return Ok(new { message = "Nhân viên đã được cập nhật thành công" });
+            if (!result)
+                return BadRequest(new { message = "Dữ liệu nhân viên không hợp lệ." });
+
+            return Ok(new { message = "Sửa nhân viên thành công." });
         }
 
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var result = await _staffService.DeleteAsync(id);
-            return Ok(new { message = "Nhân viên đã được xoá thành công" });
+            if (!result)
+                return BadRequest(new { message = "Không có nhân viên cần xóa" });
+
+            return Ok(new { message = "Xóa nhân viên thành công." });
         }
     }
 }
