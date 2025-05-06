@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -17,13 +18,23 @@ namespace prj_QLPKDK.Controllers
         }
 
         // GET: api/MedicalRecord
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpPost("get-by-patientId/{id}")]
+        public async Task<IActionResult> GetAll(string id, [FromBody] PagedQuery query)
         {
-            var result = await _medicalRecordService.GetAllAsync();
+            var result = await _medicalRecordService.GetAllAsync(id, query);
             return Ok(result);
         }
+        [HttpPost("search/{patientId}")]
+        public async Task<IActionResult> SearchByPatientId(string patientId, [FromBody] MedicalRecordFilter filter)
+        {
+            if (string.IsNullOrWhiteSpace(patientId))
+            {
+                return BadRequest("PatientId is required.");
+            }
 
+            var result = await _medicalRecordService.SearchAsync(patientId, filter);
+            return Ok(result);
+        }
         // GET: api/MedicalRecord/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)

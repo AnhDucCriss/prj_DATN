@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace prj_QLPKDK.Services
 {
@@ -19,7 +22,6 @@ namespace prj_QLPKDK.Services
             var entity = new MedicalRecords
             {
                 PatientId = model.PatientId,
-                
                 ExaminationDate = model.ExaminationDate,
                 DoctorName = model.DoctorName,
                 Symptoms = model.Symptoms,
@@ -47,10 +49,30 @@ namespace prj_QLPKDK.Services
             }
         }
 
-        public async Task<List<MedicalRecords>> GetAllAsync()
+        public async Task<PagedResult<MedicalRecords>> GetAllAsync(string id, PagedQuery query)
         {
-            var datas = await _db.MedicalRecords.ToListAsync();
-            return datas;
+            const int pageSize = 10;
+            int pageNumber = query.PageNumber <= 0 ? 1 : query.PageNumber;
+
+            var queryable = _db.MedicalRecords
+                .Where(m => m.PatientId == id)
+                .AsQueryable();
+
+            var totalRecords = await queryable.CountAsync();
+
+            var records = await queryable
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<MedicalRecords>
+            {
+                Items = records,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<MedicalRecords> GetByIdAsync(string id)
@@ -67,6 +89,44 @@ namespace prj_QLPKDK.Services
         public Task<Prescriptions> GetPrescription(string id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<PagedResult<MedicalRecords>> SearchAsync(string id, MedicalRecordFilter filter)
+        {
+            int pageSize = filter.PageSize <= 0 ? 10 : filter.PageSize;
+            int pageNumber = filter.PageNumber <= 0 ? 1 : filter.PageNumber;
+
+            var query = _db.MedicalRecords
+                .Where(m => m.PatientId == id)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter.DoctorName))
+            {
+                query = query.Where(m => m.DoctorName.Contains(filter.DoctorName));
+            }
+
+            if (filter.ExaminationDate.HasValue)
+            {
+                var ngayKham = filter.ExaminationDate.Value.Date;
+                query = query.Where(m =>
+                    EF.Functions.DateDiffDay(m.ExaminationDate.Date, ngayKham) == 0);
+            }
+
+            var totalRecords = await query.CountAsync();
+
+            var records = await query
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<MedicalRecords>
+            {
+                Items = records,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<string> UpdateAsync(string id, MedicalRecordRequestModel model)
