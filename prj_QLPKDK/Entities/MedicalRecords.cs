@@ -20,8 +20,8 @@ namespace prj_QLPKDK.Entities
         public string Conclusion { get; set; } = string.Empty;
 
         public Patients? Patient { get; set; }
-        public Prescriptions? Prescription { get; set; }
-        public Invoices? Invoice { get; set; }
+        public Prescriptions Prescription { get; set; } = new Prescriptions();
+        public Invoices Invoice { get; set; } = new Invoices();
 
     }
 }

@@ -47,7 +47,7 @@ namespace prj_QLPKDK.Controllers
         }
 
         // POST: api/MedicalRecord
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] MedicalRecordRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -58,7 +58,7 @@ namespace prj_QLPKDK.Controllers
         }
 
         // PUT: api/MedicalRecord/{id}
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] MedicalRecordRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -69,7 +69,7 @@ namespace prj_QLPKDK.Controllers
         }
 
         // DELETE: api/MedicalRecord/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             var message = await _medicalRecordService.DeleteAsync(id);

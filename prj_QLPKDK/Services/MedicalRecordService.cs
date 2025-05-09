@@ -17,7 +17,7 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> CreateAsync(MedicalRecordRequestModel  model)
+        public async Task<string> CreateAsync(MedicalRecordRequestModel model)
         {
             var entity = new MedicalRecords
             {
@@ -28,11 +28,21 @@ namespace prj_QLPKDK.Services
                 Conclusion = model.Conclusion
             };
 
-            _db.MedicalRecords!.Add(entity);
+            _db.MedicalRecords.Add(entity);
+            await _db.SaveChangesAsync(); 
+
+            
+            var newPres = new Prescriptions { MedicalRecordId = entity.Id };
+            var newInvoice = new Invoices { MedicalRecordId = entity.Id };
+
+            _db.Prescriptions.Add(newPres);
+            _db.Invoices.Add(newInvoice);
+
             await _db.SaveChangesAsync();
 
             return entity.Id;
         }
+
 
         public async Task<string> DeleteAsync(string id)
         {
