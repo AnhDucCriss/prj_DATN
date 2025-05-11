@@ -22,7 +22,7 @@ namespace prj_QLPKDK.Services
             var entity = new MedicalRecords
             {
                 PatientId = model.PatientId,
-                ExaminationDate = model.ExaminationDate,
+                ExaminationDate = DateTime.Today,
                 DoctorName = model.DoctorName,
                 Symptoms = model.Symptoms,
                 Conclusion = model.Conclusion

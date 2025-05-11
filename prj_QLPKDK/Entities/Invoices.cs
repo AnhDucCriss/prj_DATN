@@ -14,10 +14,10 @@ namespace   prj_QLPKDK.Entities
         public decimal TotalAmount { get; set; }
 
         [MaxLength(50)]
-        public string PaymentMethod { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string PaymentStatus { get; set; }
+        public string PaymentStatus { get; set; } = string.Empty;
 
         
         
