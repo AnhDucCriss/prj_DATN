@@ -21,7 +21,7 @@ namespace prj_QLPKDK.Services
             var entity = new Prescriptions
             {
                 MedicalRecordId = model.MedicalRecordId,
-                TotalAmount = model.TotalAmount,
+                
             };
 
             _db.Prescriptions.Add(entity);

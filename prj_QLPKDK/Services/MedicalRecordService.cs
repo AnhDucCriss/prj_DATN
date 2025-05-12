@@ -26,7 +26,6 @@ namespace prj_QLPKDK.Services
                 DoctorName = model.DoctorName,
                 Symptoms = model.Symptoms,
                 Conclusion = model.Conclusion
-
             };
 
             _db.MedicalRecords.Add(entity);
