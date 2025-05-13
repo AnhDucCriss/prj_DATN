@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
@@ -7,6 +8,7 @@ namespace prj_QLPKDK.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PrescriptionController : ControllerBase
     {
         private readonly IPrescriptionService _prescriptionService;
@@ -17,7 +19,7 @@ namespace prj_QLPKDK.Controllers
         }
 
         // POST: api/Prescription
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] PrescriptionResquestModel model)
         {
             if (!ModelState.IsValid)
@@ -53,9 +55,25 @@ namespace prj_QLPKDK.Controllers
 
             return Ok(result);
         }
+        [HttpPost("add-prescriptiondetail")]
+        public async Task<IActionResult> AddPrescriptionDetail([FromBody] PrescriptionDetailRequest dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var result = await _prescriptionService.AddPresDetail(dto);
+
+            if (result == "Không có thuốc trong kho thuốc" || result == "Số lượng thuốc trong kho đã hết")
+            {
+                return BadRequest(new { message = result });
+            }
+
+            return Ok(new { id = result });
+        }
         // PUT: api/Prescription/{id}
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] PrescriptionResquestModel model)
         {
             if (!ModelState.IsValid)

@@ -6,13 +6,13 @@ namespace prj_QLPKDK.Models.Resquest
 {
     public class PrescriptionResquestModel
     {
-        public string MedicalRecordId { get; set; } = string.Empty;
-       
-        public float TotalAmount { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public DateTime ExaminationDate { get; set; } = DateTime.Today;
+        public string DoctorName { get; set; } = string.Empty;
+        public string MedicalRecordId { get; set; } = string.Empty;    
         public int Quantity { get; set; }
         
-        public string Dosage { get; set; } = string.Empty;
+      
   
-        public string UsageInstructions { get; set; } = string.Empty;
     }
 }

@@ -9,8 +9,8 @@ namespace prj_QLPKDK.Entities
         [ForeignKey("MedicalRecord")]
         public string MedicalRecordId { get; set; } 
         public MedicalRecords MedicalRecord { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public float TotalAmount { get; set; }
+        public string PatientName { get; set; } = string.Empty;
+        public string DoctorName { get; set; } = string.Empty;
         public List<PrescriptionDetails> PrescriptionDetails { get; set; }
     }
 }

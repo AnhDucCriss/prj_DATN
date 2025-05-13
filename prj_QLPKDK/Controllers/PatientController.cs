@@ -102,8 +102,8 @@ namespace prj_QLPKDK.Controllers
         {
             try
             {
-                var message = await _patientService.DeleteAsync(id);
-                return Ok(new { message });
+                var aaa = await _patientService.DeleteAsync(id);
+                return Ok(new { message = "Xóa thành công" });
             }
             catch (KeyNotFoundException ex)
             {

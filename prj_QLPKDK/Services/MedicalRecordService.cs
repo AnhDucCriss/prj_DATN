@@ -26,6 +26,7 @@ namespace prj_QLPKDK.Services
                 DoctorName = model.DoctorName,
                 Symptoms = model.Symptoms,
                 Conclusion = model.Conclusion
+
             };
 
             _db.MedicalRecords.Add(entity);
@@ -47,8 +48,13 @@ namespace prj_QLPKDK.Services
         public async Task<string> DeleteAsync(string id)
         {
             var dellData = _db.MedicalRecords.SingleOrDefault(x => x.Id == id);
-            if (dellData != null)
+            var dellpres = _db.Prescriptions.SingleOrDefault(x => x.MedicalRecordId == id);
+            var dellinvoice = _db.Invoices.SingleOrDefault(x => x.MedicalRecordId == id);
+            
+            if (dellData != null && dellpres != null && dellinvoice != null)
             {
+                _db.Prescriptions!.Remove(dellpres);
+                _db.Invoices!.Remove(dellinvoice);
                 _db.MedicalRecords!.Remove(dellData);
                 await _db.SaveChangesAsync();
                 return "Xoá thành công MedicalRecord có ID: " + id;
