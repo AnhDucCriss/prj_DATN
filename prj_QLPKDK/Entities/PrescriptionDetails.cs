@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace prj_QLPKDK.Entities
 {
-    public class PrescriptionDetails : BaseEntity
+    public class  PrescriptionDetails : BaseEntity
     {
         [ForeignKey("Prescription")]
         public string PrescriptionId { get; set; } = string.Empty;
@@ -15,11 +15,11 @@ namespace prj_QLPKDK.Entities
         public int Quantity { get; set; }
 
         [MaxLength(100)]
-        public string Dosage { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
 
         [MaxLength(255)]
         public string UsageInstructions { get; set; } = string.Empty;
 
-        public Medicines Medicine { get; set; }
+        public Medicines Medicine { get; set; } 
     }
 }

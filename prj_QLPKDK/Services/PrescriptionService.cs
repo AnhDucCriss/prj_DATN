@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.Response;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -14,14 +15,44 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        
+        public async Task<string> AddPresDetail(PrescriptionDetailRequest dto)
+        {
+            var medicine = _db.Medicines.FirstOrDefault(x => x.MedicineName == dto.medicineName);
+            
+            if(medicine == null)
+            {
+                return "Không có thuốc trong kho thuốc";
+            }
+            if(medicine.Quantity == 0)
+            {
+                return "Số lượng thuốc trong kho đã hết";
+            }
+            var entity = new PrescriptionDetails
+            {
+                PrescriptionId = dto.prescriptionID,
+                Medicine = medicine,
+                Quantity = dto.quantity,
+                Unit = dto.unit,
+
+
+            };
+
+            _db.PrescriptionDetails.Add(entity);
+            await _db.SaveChangesAsync();
+
+            return entity.Id; 
+        }
 
         public async Task<string> CreateAsync(PrescriptionResquestModel model)
         {
+            
             var entity = new Prescriptions
             {
                 MedicalRecordId = model.MedicalRecordId,
-                
+                PatientName = model.PatientName,
+                DoctorName = model.DoctorName,
+                PrescriptionDetails = new List<PrescriptionDetails>(),
+
             };
 
             _db.Prescriptions.Add(entity);
@@ -46,14 +77,53 @@ namespace prj_QLPKDK.Services
             return await _db.Prescriptions.ToListAsync();
         }
 
-        public async Task<Prescriptions> GetByIdAsync(string id)
+        public async Task<PrescriptionResponse> GetByIdAsync(string id)
         {
-            return await _db.Prescriptions.FirstOrDefaultAsync(p => p.Id == id);
+            var pres =  await _db.Prescriptions.FirstOrDefaultAsync(p => p.MedicalRecordId == id);
+            
+            if(pres != null)
+            {
+                var presdetail = await _db.PrescriptionDetails
+                     .Where(x => x.PrescriptionId == pres.Id)
+                     .Include(x => x.Medicine) 
+                     .ToListAsync();
+                
+
+                var resp = new PrescriptionResponse
+                {
+                    PatientName = pres.PatientName,
+                    DoctorName = pres.DoctorName,
+                    PrescriptionDetails = presdetail
+                };
+                return resp;
+            }
+            return new PrescriptionResponse();
         }
 
        
 
-        public Task<string> UpdateAsync(string id, PrescriptionResquestModel model)
+        public async Task<string> UpdateAsync(string id, PrescriptionResquestModel model)
+        {
+            var entity = await _db.Prescriptions.FindAsync(id);
+
+            if (entity == null)
+            {
+                throw new KeyNotFoundException("Prescription not found.");
+            }
+
+            // Cập nhật các trường cần thiết
+            
+            entity.PatientName = model.PatientName;
+            entity.DoctorName = model.DoctorName;
+            // Cập nhật thêm các trường nếu cần thiết (ví dụ: TotalAmount, Quantity, Dosage, UsageInstructions)
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _db.SaveChangesAsync();
+
+            return entity.Id; // Trả về ID của đơn thuốc đã cập nhật
+        }
+
+        public Task UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request)
         {
             throw new NotImplementedException();
         }
