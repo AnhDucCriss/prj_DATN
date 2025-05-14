@@ -8,11 +8,8 @@ namespace prj_QLPKDK.Models.Resquest
     {
 
         public string PatientName { get; set; } = string.Empty;
-        public DateTime ExaminationDate { get; set; } = DateTime.Today;
         public string DoctorName { get; set; } = string.Empty;
         public string MedicalRecordId { get; set; } = string.Empty;    
-        public int Quantity { get; set; }
         
-
     }
 }

@@ -51,7 +51,7 @@ namespace prj_QLPKDK.Services
                 MedicalRecordId = model.MedicalRecordId,
                 PatientName = model.PatientName,
                 DoctorName = model.DoctorName,
-                PrescriptionDetails = new List<PrescriptionDetails>(),
+                
 
             };
 

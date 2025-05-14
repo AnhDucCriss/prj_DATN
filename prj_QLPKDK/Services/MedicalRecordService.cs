@@ -29,10 +29,15 @@ namespace prj_QLPKDK.Services
             };
 
             _db.MedicalRecords.Add(entity);
-            await _db.SaveChangesAsync(); 
+            await _db.SaveChangesAsync();
 
-            
-            var newPres = new Prescriptions { MedicalRecordId = entity.Id };
+            var patient = await _db.Patients.FirstOrDefaultAsync(x => x.Id == model.PatientId);
+            var newPres = new Prescriptions { 
+                MedicalRecordId = entity.Id,
+                PatientName = patient.FullName,
+                DoctorName = model.DoctorName,
+
+            };
             var newInvoice = new Invoices { MedicalRecordId = entity.Id };
 
             _db.Prescriptions.Add(newPres);
