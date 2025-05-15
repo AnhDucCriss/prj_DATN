@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
@@ -26,7 +27,7 @@ namespace prj_QLPKDK.Controllers
             var result = await _medicineService.GetAllAsync(query);
             return Ok(result);
         }
-
+        
         // GET: api/Medicine/5
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(string id)

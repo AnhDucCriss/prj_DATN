@@ -14,34 +14,71 @@ namespace prj_QLPKDK.Services
         {
             _db = db;
         }
-
-        public async Task<string> AddPresDetail(PrescriptionDetailRequest dto)
+        public async Task<PrescriptionDetails> AddPrescriptionDetailAsync(PrescriptionDetailRequest model)
         {
-            var medicine = _db.Medicines.FirstOrDefault(x => x.MedicineName == dto.medicineName);
-            
-            if(medicine == null)
-            {
-                return "Không có thuốc trong kho thuốc";
-            }
-            if(medicine.Quantity == 0)
-            {
-                return "Số lượng thuốc trong kho đã hết";
-            }
-            var entity = new PrescriptionDetails
-            {
-                PrescriptionId = dto.prescriptionID,
-                Medicine = medicine,
-                Quantity = dto.quantity,
-                Unit = dto.unit,
+            // 1. Kiểm tra đơn thuốc có tồn tại không
+            var prescription = await _db.Prescriptions
+                .FirstOrDefaultAsync(p => p.Id == model.PrescriptionId);
 
+            if (prescription == null)
+                throw new Exception("Đơn thuốc không tồn tại");
 
+            // 2. Tìm thuốc theo tên
+            var medicine = await _db.Medicines
+                .FirstOrDefaultAsync(m => m.MedicineName.ToLower() == model.MedicineName.ToLower());
+
+            if (medicine == null)
+                throw new Exception($"Thuốc '{model.MedicineName}' không tồn tại trong kho");
+
+            // 3. Kiểm tra số lượng còn lại
+            if (medicine.Quantity < model.Quantity)
+                throw new Exception($"Thuốc '{model.MedicineName}' không đủ trong kho. Hiện còn {medicine.Quantity}");
+
+            // 4. Trừ thuốc trong kho
+            medicine.Quantity -= model.Quantity;
+
+            // 5. Tạo PrescriptionDetail
+            var detail = new PrescriptionDetails
+            {
+                PrescriptionId = model.PrescriptionId,
+                MedicineId = medicine.Id,
+                Quantity = model.Quantity,
+                Unit = model.Unit
             };
 
-            _db.PrescriptionDetails.Add(entity);
+            // 6. Lưu DB
+            _db.PrescriptionDetails.Add(detail);
             await _db.SaveChangesAsync();
 
-            return entity.Id; 
+            return detail;
         }
+        //public async Task<string> AddPresDetail(PrescriptionDetailRequest dto)
+        //{
+        //    var medicine = _db.Medicines.FirstOrDefault(x => x.MedicineName == dto.medicineName);
+            
+        //    if(medicine == null)
+        //    {
+        //        return "Không có thuốc trong kho thuốc";
+        //    }
+        //    if(medicine.Quantity == 0)
+        //    {
+        //        return "Số lượng thuốc trong kho đã hết";
+        //    }
+        //    var entity = new PrescriptionDetails
+        //    {
+        //        PrescriptionId = dto.prescriptionID,
+        //        Medicine = medicine,
+        //        Quantity = dto.quantity,
+        //        Unit = dto.unit,
+
+
+        //    };
+
+        //    _db.PrescriptionDetails.Add(entity);
+        //    await _db.SaveChangesAsync();
+
+        //    return entity.Id; 
+        //}
 
         public async Task<string> CreateAsync(PrescriptionResquestModel model)
         {
@@ -52,7 +89,6 @@ namespace prj_QLPKDK.Services
                 PatientName = model.PatientName,
                 DoctorName = model.DoctorName,
                 
-
             };
 
             _db.Prescriptions.Add(entity);
@@ -123,31 +159,45 @@ namespace prj_QLPKDK.Services
             return entity.Id; // Trả về ID của đơn thuốc đã cập nhật
         }
 
-        public async Task UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request)
+        public async Task<bool> UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request)
         {
             var prescription = await _db.Prescriptions
                 .Include(p => p.PrescriptionDetails)
-                .FirstOrDefaultAsync(p => p.Id == request.PrescriptionId);
-
+                .FirstOrDefaultAsync(p => p.MedicalRecordId == request.MedicalRecordId);
+            
             if (prescription == null)
-                throw new Exception("Prescription not found");
+                throw new Exception("Không tìm thấy đơn thuốc.");
+            var dellPresDetail = await _db.PrescriptionDetails.Where(x => x.PrescriptionId == prescription.Id).ToListAsync();
+            // Xóa các PrescriptionDetail cũ
+            _db.PrescriptionDetails.RemoveRange(dellPresDetail);
+            await _db.SaveChangesAsync(); 
 
-            // Xóa chi tiết thuốc cũ
-            _db.PrescriptionDetails.RemoveRange(prescription.PrescriptionDetails);
-
-            // Thêm danh sách thuốc mới
-            var newDetails = request.PrescriptionDetails.Select(d => new PrescriptionDetails
+            // Sau đó mới thêm các chi tiết mới
+            var newDetails = new List<PrescriptionDetails>();
+            foreach (var item in request.Items)
             {
-                PrescriptionId = prescription.Id,
-                //dicine = d.medicineName,
-                Quantity = d.Quantity,
-                Unit = d.Unit,
-                
-            }).ToList();
+                var medicine = await _db.Medicines.FirstOrDefaultAsync(m => m.MedicineName == item.MedicineName);
+                if (medicine == null)
+                    throw new Exception($"Không tìm thấy thuốc: {item.MedicineName}");
+
+                if (medicine.Quantity < item.Quantity)
+                    throw new Exception($"Thuốc '{medicine.MedicineName}' không đủ số lượng trong kho.");
+
+                medicine.Quantity -= item.Quantity;
+
+                newDetails.Add(new PrescriptionDetails
+                {
+                    PrescriptionId = prescription.Id,
+                    MedicineId = medicine.Id,
+                    Quantity = item.Quantity,
+                    Unit = medicine.Unit
+                });
+            }
 
             await _db.PrescriptionDetails.AddRangeAsync(newDetails);
-
             await _db.SaveChangesAsync();
+            return true;
         }
+
     }
 }

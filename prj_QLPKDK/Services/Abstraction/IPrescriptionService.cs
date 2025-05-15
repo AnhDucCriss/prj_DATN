@@ -10,8 +10,9 @@ namespace prj_QLPKDK.Services.Abstraction
         Task<string> UpdateAsync(string id, PrescriptionResquestModel model);
         Task<string> DeleteAsync(string id);
         Task<PrescriptionResponse> GetByIdAsync(string id);
-        Task<string> AddPresDetail(PrescriptionDetailRequest dto);
+        //Task<string> AddPresDetail(PrescriptionDetailRequest dto);
         Task<List<Prescriptions>> GetAllAsync();
-        Task UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request);
+        Task<PrescriptionDetails> AddPrescriptionDetailAsync(PrescriptionDetailRequest model);
+        Task<bool> UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request);
     }
 }

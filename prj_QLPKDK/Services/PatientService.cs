@@ -136,6 +136,10 @@ namespace prj_QLPKDK.Services
             patient.Address = model.Address;
             patient.Email = model.Email;
 
+            var medical = await _db.MedicalRecords.FirstOrDefaultAsync(x => x.PatientId == id);
+            var pres = await _db.Prescriptions.FirstOrDefaultAsync(x => x.MedicalRecordId == medical.Id);
+            pres.PatientName = model.FullName;
+
             await _db.SaveChangesAsync();
             return true;
         }

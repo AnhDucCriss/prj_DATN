@@ -14,8 +14,7 @@ namespace prj_QLPKDK.Models.Resquest
         [Range(0, double.MaxValue, ErrorMessage = "Giá phải lớn hơn hoặc bằng 0.")]
         public decimal Price { get; set; }
 
-        [MaxLength(255)]
-        public string Description { get; set; } = string.Empty;
+        public int Quantity { get; set; }
 
         [MaxLength(50)]
         public string Category { get; set; } = string.Empty;
