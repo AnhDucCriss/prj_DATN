@@ -16,10 +16,6 @@ namespace prj_QLPKDK.Entities
 
         [MaxLength(100)]
         public string Unit { get; set; } = string.Empty;
-
-        [MaxLength(255)]
-        public string UsageInstructions { get; set; } = string.Empty;
-
         public Medicines Medicine { get; set; } 
     }
 }

@@ -51,7 +51,8 @@ namespace prj_QLPKDK.Services
                 MedicalRecordId = model.MedicalRecordId,
                 PatientName = model.PatientName,
                 DoctorName = model.DoctorName,
-                PrescriptionDetails = new List<PrescriptionDetails>(),
+                
+
             };
 
             _db.Prescriptions.Add(entity);
@@ -86,10 +87,7 @@ namespace prj_QLPKDK.Services
                      .Where(x => x.PrescriptionId == pres.Id)
                      .Include(x => x.Medicine) 
                      .ToListAsync();
-                foreach (var item in presdetail)
-                {
-
-                }
+                
 
                 var resp = new PrescriptionResponse
                 {
@@ -125,9 +123,31 @@ namespace prj_QLPKDK.Services
             return entity.Id; // Trả về ID của đơn thuốc đã cập nhật
         }
 
-        public Task UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request)
+        public async Task UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request)
         {
-            throw new NotImplementedException();
+            var prescription = await _db.Prescriptions
+                .Include(p => p.PrescriptionDetails)
+                .FirstOrDefaultAsync(p => p.Id == request.PrescriptionId);
+
+            if (prescription == null)
+                throw new Exception("Prescription not found");
+
+            // Xóa chi tiết thuốc cũ
+            _db.PrescriptionDetails.RemoveRange(prescription.PrescriptionDetails);
+
+            // Thêm danh sách thuốc mới
+            var newDetails = request.PrescriptionDetails.Select(d => new PrescriptionDetails
+            {
+                PrescriptionId = prescription.Id,
+                //dicine = d.medicineName,
+                Quantity = d.Quantity,
+                Unit = d.Unit,
+                
+            }).ToList();
+
+            await _db.PrescriptionDetails.AddRangeAsync(newDetails);
+
+            await _db.SaveChangesAsync();
         }
     }
 }

@@ -3,6 +3,6 @@
     public class UpdatePrescriptionDetailsRequest
     {
         public string PrescriptionId { get; set; } = string.Empty;
-        public List<PrescriptionDetailRequest> Details { get; set; }
+        public List<PrescriptionDetailDto> PrescriptionDetails { get; set; }
     }
 }

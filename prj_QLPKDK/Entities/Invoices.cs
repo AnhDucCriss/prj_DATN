@@ -19,8 +19,5 @@ namespace   prj_QLPKDK.Entities
         [MaxLength(50)]
         public string PaymentStatus { get; set; } = string.Empty;
 
-        
-        
-
     }
 }
