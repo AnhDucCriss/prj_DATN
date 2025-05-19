@@ -12,8 +12,8 @@ using prj_QLPKDK.Data;
 namespace prj_QLPKDK.Migrations
 {
     [DbContext(typeof(WebContext))]
-    [Migration("20250514073754_InitDb12")]
-    partial class InitDb12
+    [Migration("20250515083237_Initdb4")]
+    partial class Initdb4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,11 +270,6 @@ namespace prj_QLPKDK.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UsageInstructions")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
