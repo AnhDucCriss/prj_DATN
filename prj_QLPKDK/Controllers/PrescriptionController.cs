@@ -55,23 +55,48 @@ namespace prj_QLPKDK.Controllers
 
             return Ok(result);
         }
-        [HttpPost("add-prescriptiondetail")]
-        public async Task<IActionResult> AddPrescriptionDetail([FromBody] PrescriptionDetailRequest dto)
+        //[HttpPost("add-prescriptiondetail")]
+        //public async Task<IActionResult> AddPrescriptionDetail([FromBody] PrescriptionDetailRequest dto)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    var result = await _prescriptionService.AddPresDetail(dto);
+
+        //    if (result == "Không có thuốc trong kho thuốc" || result == "Số lượng thuốc trong kho đã hết")
+        //    {
+        //        return BadRequest(new { message = result });
+        //    }
+
+        //    return Ok(new { id = result });
+        //}
+
+        [HttpPost("add-detail")]
+        public async Task<IActionResult> AddPrescriptionDetail([FromBody] PrescriptionDetailRequest model)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
-            var result = await _prescriptionService.AddPresDetail(dto);
-
-            if (result == "Không có thuốc trong kho thuốc" || result == "Số lượng thuốc trong kho đã hết")
+            try
             {
-                return BadRequest(new { message = result });
+                var detail = await _prescriptionService.AddPrescriptionDetailAsync(model);
+                return Ok(new
+                {
+                    message = "Thêm thuốc vào đơn thuốc thành công",
+                    data = detail
+                });
             }
-
-            return Ok(new { id = result });
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
+
         // PUT: api/Prescription/{id}
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(string id, [FromBody] PrescriptionResquestModel model)
@@ -81,6 +106,20 @@ namespace prj_QLPKDK.Controllers
 
             var result = await _prescriptionService.UpdateAsync(id, model);
             return Ok(new { message = result });
+        }
+
+        [HttpPost("update-details")]
+        public async Task<IActionResult> UpdateDetails([FromBody] UpdatePrescriptionDetailsRequest request)
+        {
+            try
+            {
+                var result = await _prescriptionService.UpdatePrescriptionDetailsAsync(request);
+                return Ok(new { message = "Cập nhật đơn thuốc thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

@@ -19,6 +19,13 @@ namespace prj_QLPKDK.Services
 
         public async Task<string> CreateAsync(MedicalRecordRequestModel model)
         {
+            var doctorExists = await _db.Staffs
+                .AnyAsync(s => s.FullName == model.DoctorName && s.Position.ToLower() == "bác sĩ");
+
+            if (!doctorExists)
+            {
+                return $"Không tìm thấy bác sĩ có tên '{model.DoctorName}' trong danh sách nhân viên.";
+            }
             var entity = new MedicalRecords
             {
                 PatientId = model.PatientId,
@@ -156,13 +163,22 @@ namespace prj_QLPKDK.Services
             {
                 return $"Không tìm thấy hồ sơ khám bệnh với ID: {id}";
             }
+            var doctorExists = await _db.Staffs
+                .AnyAsync(s => s.FullName == model.DoctorName && s.Position.ToLower() == "bác sĩ");
 
+            if (!doctorExists)
+            {
+                return $"Không tìm thấy bác sĩ có tên '{model.DoctorName}' trong danh sách nhân viên.";
+            }
             // Cập nhật thông tin
-            
+
             existing.ExaminationDate = model.ExaminationDate;
             existing.DoctorName = model.DoctorName;
             existing.Symptoms = model.Symptoms;
             existing.Conclusion = model.Conclusion;
+
+            var pres = await _db.Prescriptions.FirstOrDefaultAsync(x => x.MedicalRecordId == existing.Id);
+            pres.DoctorName = model.DoctorName;
 
             await _db.SaveChangesAsync();
 

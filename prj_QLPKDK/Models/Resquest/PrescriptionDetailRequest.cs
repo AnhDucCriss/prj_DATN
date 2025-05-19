@@ -2,9 +2,9 @@
 {
     public class PrescriptionDetailRequest
     {
-        public string prescriptionID { get; set; } = string.Empty;
-        public string medicineName { get; set; } = string.Empty;
-        public string unit { get; set; } = string.Empty;
-        public int quantity { get; set; } 
+        public string PrescriptionId { get; set; }
+        public string MedicineName { get; set; } // từ input frontend
+        public int Quantity { get; set; }
+        public string Unit { get; set; }
     }
 }

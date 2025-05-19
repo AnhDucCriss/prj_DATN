@@ -2,7 +2,7 @@
 {
     public class UpdatePrescriptionDetailsRequest
     {
-        public string PrescriptionId { get; set; } = string.Empty;
-        public List<PrescriptionDetailDto> PrescriptionDetails { get; set; }
+        public string MedicalRecordId { get; set; }
+        public List<PrescriptionDetailItemModel> Items { get; set; }
     }
 }

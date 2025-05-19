@@ -26,8 +26,8 @@ namespace prj_QLPKDK.Services
                 MedicineName = model.MedicineName,
                 Unit = model.Unit,
                 Price = model.Price,
-                Description = model.Description,
-                Category = model.Category
+                Category = model.Category,
+                Quantity = model.Quantity
             };
 
             _db.Medicines.Add(newMedicine);
@@ -45,7 +45,7 @@ namespace prj_QLPKDK.Services
             medicine.MedicineName = model.MedicineName;
             medicine.Unit = model.Unit;
             medicine.Price = model.Price;
-            medicine.Description = model.Description;
+            medicine.Quantity = model.Quantity;
             medicine.Category = model.Category;
 
             await _db.SaveChangesAsync();
