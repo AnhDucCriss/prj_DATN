@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using prj_QLPKDK.Data;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -12,10 +14,11 @@ namespace prj_QLPKDK.Controllers
     public class PrescriptionController : ControllerBase
     {
         private readonly IPrescriptionService _prescriptionService;
-
-        public PrescriptionController(IPrescriptionService prescriptionService)
+        private readonly WebContext _db;
+        public PrescriptionController(IPrescriptionService prescriptionService, WebContext db)
         {
             _prescriptionService = prescriptionService;
+            _db = db;
         }
 
         // POST: api/Prescription
@@ -54,6 +57,14 @@ namespace prj_QLPKDK.Controllers
                 return NotFound(new { message = "Không tìm thấy đơn thuốc." });
 
             return Ok(result);
+        }
+
+        [HttpGet("export-pdf/{medicalRecordId}")]
+        public async Task<IActionResult> ExportPdf(string medicalRecordId)
+        {
+            var pdfBytes = await _prescriptionService.GeneratePrescriptionPdfAsync(medicalRecordId);
+            var pres = await _db.Prescriptions.FirstOrDefaultAsync(x => x.MedicalRecordId == medicalRecordId);
+            return File(pdfBytes, "application/pdf", $"donthuoccua_{pres.PatientName}.pdf");
         }
         //[HttpPost("add-prescriptiondetail")]
         //public async Task<IActionResult> AddPrescriptionDetail([FromBody] PrescriptionDetailRequest dto)
