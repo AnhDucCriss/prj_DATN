@@ -1,9 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Metadata;
+using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
 using prj_QLPKDK.Models.Response;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using Document = QuestPDF.Fluent.Document;
 
 namespace prj_QLPKDK.Services
 {
@@ -197,6 +203,81 @@ namespace prj_QLPKDK.Services
             await _db.PrescriptionDetails.AddRangeAsync(newDetails);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<byte[]> GeneratePrescriptionPdfAsync(string medicalRecordId)
+        {
+            var prescription = await _db.Prescriptions
+                .FirstOrDefaultAsync(p => p.MedicalRecordId == medicalRecordId);
+
+            if (prescription == null)
+                throw new Exception("Không tìm thấy đơn thuốc.");
+
+            var details = await _db.PrescriptionDetails
+                .Where(d => d.PrescriptionId == prescription.Id)
+                .Include(d => d.Medicine)
+                .ToListAsync();
+            QuestPDF.Settings.License = LicenseType.Community;
+            var stream = new MemoryStream();
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(40);
+                    page.Size(PageSizes.A4);
+                    page.Header().Text("Đơn thuốc").FontSize(20).Bold().AlignCenter();
+
+                    page.Content().PaddingTop(20).Column(col =>
+                    {
+                        col.Item().Text($"Tên bệnh nhân: {prescription.PatientName}").FontSize(14).Bold();
+                        col.Item().Element(x => x.PaddingBottom(10))
+                                 .Text($"Bác sĩ điều trị: {prescription.DoctorName}").FontSize(14).Bold();
+
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(4); // Tên thuốc
+                                columns.RelativeColumn(2); // Đơn vị
+                                columns.RelativeColumn(2); // Số lượng
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Element(CellStyle).Text("Tên thuốc").Bold();
+                                header.Cell().Element(CellStyle).Text("Đơn vị").Bold();
+                                header.Cell().Element(CellStyle).Text("Số lượng").Bold();
+                            });
+
+                            foreach (var item in details)
+                            {
+                                table.Cell().Element(CellStyle).Text(item.Medicine.MedicineName);
+                                table.Cell().Element(CellStyle).Text(item.Unit);
+                                table.Cell().Element(CellStyle).Text(item.Quantity.ToString());
+                            }
+
+                            static IContainer CellStyle(IContainer container) =>
+                                container.PaddingVertical(5).PaddingHorizontal(10);
+                        });
+
+
+                        
+                        col.Item().AlignRight().PaddingTop(50).Text($"Thanh Hóa, ngày {DateTime.Now.Day}, tháng {DateTime.Now.Month}, năm {DateTime.Now.Year}").FontSize(13);
+                        
+                        col.Item().AlignRight().PaddingRight(50).Text("Người tạo đơn").FontSize(13).Bold();
+                        
+                        col.Item().Height(50); 
+
+                        
+                        
+                    });
+
+                    
+                });
+            });
+
+            return document.GeneratePdf();
         }
 
     }

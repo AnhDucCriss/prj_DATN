@@ -14,5 +14,6 @@ namespace prj_QLPKDK.Services.Abstraction
         Task<List<Prescriptions>> GetAllAsync();
         Task<PrescriptionDetails> AddPrescriptionDetailAsync(PrescriptionDetailRequest model);
         Task<bool> UpdatePrescriptionDetailsAsync(UpdatePrescriptionDetailsRequest request);
+        Task<byte[]> GeneratePrescriptionPdfAsync(string medicalRecordId);
     }
 }
