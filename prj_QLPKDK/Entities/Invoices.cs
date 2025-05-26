@@ -17,7 +17,7 @@ namespace   prj_QLPKDK.Entities
         public string PaymentMethod { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string PaymentStatus { get; set; } = string.Empty;
+        public bool PaymentStatus { get; set; }
 
     }
 }

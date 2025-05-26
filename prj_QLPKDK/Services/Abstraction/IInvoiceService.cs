@@ -6,12 +6,12 @@ namespace prj_QLPKDK.Services.Abstraction
 {
     public interface IInvoiceService 
     { 
-        Task<string> CreateAsync(InvoiceRequestModel model);
+        
         Task<List<Invoices>> GetAllAsync();
         Task<Invoices> GetByIdAsync(string id);
         
         Task<InvoiceResponseModel> GetByMedicalRecordIdAsync(string medicalRecordId);
-        Task<string> UpdateAsync(string id, InvoiceRequestModel model);
+        Task<string> UpdateAsync(string medicalRecordID);
         Task<string> DeleteAsync(string id);
     }
 }

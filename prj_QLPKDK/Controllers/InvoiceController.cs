@@ -32,6 +32,20 @@ namespace prj_QLPKDK.Controllers
             }
         }
 
+        [HttpPut("update-payment-status/{medicalRecordId}")]
+        public async Task<IActionResult> UpdatePaymentStatus(string medicalRecordId)
+        {
+            try
+            {
+                var result = await _invoiceService.UpdateAsync(medicalRecordId);
+                return Ok(new { message = "Cập nhật hóa đơn thành công." });
+            }
+            catch (Exception ex)
+            {
+                // Trả về mã lỗi 404 hoặc 400 nếu cần
+                return NotFound(new { message = ex.Message });
+            }
+        }
 
     }
 }

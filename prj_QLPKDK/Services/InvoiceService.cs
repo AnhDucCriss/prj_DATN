@@ -16,26 +16,7 @@ namespace prj_QLPKDK.Services
             _db = db;
         }
 
-        public async Task<string> CreateAsync(InvoiceRequestModel model)
-        {
-            // Kiểm tra nếu thông tin cần thiết không hợp lệ
-            if (model == null)
-                return "Dữ liệu hóa đơn không được để trống.";
-
-            var newInvoice = new Invoices
-            {
-
-                TotalAmount = model.TotalAmount,
-                PaymentMethod = model.PaymentMethod,
-                PaymentStatus = model.PaymentStatus
-            };
-
-            _db.Invoices.Add(newInvoice);
-            await _db.SaveChangesAsync();
-
-            return "Thêm hóa đơn thành công.";
-        }
-
+        
         // Lấy tất cả hóa đơn
         public async Task<List<Invoices>> GetAllAsync()
         {
@@ -59,22 +40,26 @@ namespace prj_QLPKDK.Services
         // Lấy hóa đơn theo ID hồ sơ bệnh án
 
         // Cập nhật hóa đơn
-        public async Task<string> UpdateAsync(string id, InvoiceRequestModel model)
+        public async Task<string> UpdateAsync(string medicalRecordID)
         {
-            var invoice = await _db.Invoices.FindAsync(id);
+            var invoice = await _db.Invoices.FirstOrDefaultAsync(x => x.MedicalRecordId == medicalRecordID);
 
             if (invoice == null)
-                return "Không tìm thấy hóa đơn với ID = " + id;
+                return "Không tìm thấy hóa đơn" ;
 
             // Kiểm tra và cập nhật các trường của hóa đơn
 
-            invoice.MedicalRecord.Id = model.MedicalRecordId;
-            invoice.TotalAmount = model.TotalAmount;
-            invoice.PaymentMethod = model.PaymentMethod;
-            invoice.PaymentStatus = model.PaymentStatus;
+           
+            if(invoice.PaymentStatus == true)
+            {
+                invoice.PaymentStatus = false;
+            } else
+            {
+                invoice.PaymentStatus = true;
+            }
 
             await _db.SaveChangesAsync();
-
+            
             return "Cập nhật hóa đơn thành công.";
         }
 
@@ -111,7 +96,7 @@ namespace prj_QLPKDK.Services
             var pescription = await _db.Prescriptions.FirstOrDefaultAsync(x => x.MedicalRecordId == medicalRecordId);
             var listThuoc = await _db.PrescriptionDetails.Where(x => x.PrescriptionId == pescription.Id).ToListAsync();
             float totalAmount = 0;
-            
+            var invoice = await _db.Invoices.FirstOrDefaultAsync(x => x.MedicalRecordId == medicalRecordId);
             foreach ( var item in listThuoc )
             {
                 var thuoc = await _db.Medicines.FirstOrDefaultAsync(x => x.Id == item.MedicineId);
@@ -124,6 +109,7 @@ namespace prj_QLPKDK.Services
                 ExaminationDate = medicalRecord.ExaminationDate,
                 Conclusion = medicalRecord.Conclusion,
                 TotalAmout = totalAmount,
+                PaymentStatus = invoice.PaymentStatus,
                 
             };
         }
