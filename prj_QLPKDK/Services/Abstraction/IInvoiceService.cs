@@ -1,4 +1,5 @@
 ﻿using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.Response;
 using prj_QLPKDK.Models.Resquest;
 
 namespace prj_QLPKDK.Services.Abstraction
@@ -9,7 +10,7 @@ namespace prj_QLPKDK.Services.Abstraction
         Task<List<Invoices>> GetAllAsync();
         Task<Invoices> GetByIdAsync(string id);
         
-        Task<List<Invoices>> GetByMedicalRecordIdAsync(string medicalRecordId);
+        Task<InvoiceResponseModel> GetByMedicalRecordIdAsync(string medicalRecordId);
         Task<string> UpdateAsync(string id, InvoiceRequestModel model);
         Task<string> DeleteAsync(string id);
     }

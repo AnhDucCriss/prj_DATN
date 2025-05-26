@@ -13,7 +13,7 @@ namespace prj_QLPKDK.Entities
         public string Unit { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; }
+        public float Price { get; set; }
 
         [MaxLength(255)]
         public string Description { get; set; } = string.Empty;

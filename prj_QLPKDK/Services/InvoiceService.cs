@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using prj_QLPKDK.Data;
 using prj_QLPKDK.Entities;
+using prj_QLPKDK.Models.Response;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
@@ -22,7 +24,7 @@ namespace prj_QLPKDK.Services
 
             var newInvoice = new Invoices
             {
-               
+
                 TotalAmount = model.TotalAmount,
                 PaymentMethod = model.PaymentMethod,
                 PaymentStatus = model.PaymentStatus
@@ -38,7 +40,7 @@ namespace prj_QLPKDK.Services
         public async Task<List<Invoices>> GetAllAsync()
         {
             return await _db.Invoices
-                             
+
                              .Include(i => i.MedicalRecord)
                              .ToListAsync();
         }
@@ -52,16 +54,9 @@ namespace prj_QLPKDK.Services
         }
 
         // Lấy hóa đơn theo ID bệnh nhân
-        
+
 
         // Lấy hóa đơn theo ID hồ sơ bệnh án
-        public async Task<List<Invoices>> GetByMedicalRecordIdAsync(string medicalRecordId)
-        {
-            return await _db.Invoices
-                             .Where(i => i.MedicalRecord.Id == medicalRecordId)
-                             .Include(i => i.MedicalRecord)
-                             .ToListAsync();
-        }
 
         // Cập nhật hóa đơn
         public async Task<string> UpdateAsync(string id, InvoiceRequestModel model)
@@ -72,7 +67,7 @@ namespace prj_QLPKDK.Services
                 return "Không tìm thấy hóa đơn với ID = " + id;
 
             // Kiểm tra và cập nhật các trường của hóa đơn
-            
+
             invoice.MedicalRecord.Id = model.MedicalRecordId;
             invoice.TotalAmount = model.TotalAmount;
             invoice.PaymentMethod = model.PaymentMethod;
@@ -97,5 +92,40 @@ namespace prj_QLPKDK.Services
             return "Xóa hóa đơn thành công.";
         }
 
+        public async Task<InvoiceResponseModel> GetByMedicalRecordIdAsync(string medicalRecordId)
+        {
+            var medicalRecord = await _db.MedicalRecords
+                .Include(x => x.Patient)
+                .Include(x => x.Invoice)
+                .FirstOrDefaultAsync(x => x.Id == medicalRecordId);
+
+            if (medicalRecord == null || medicalRecord.Invoice == null || medicalRecord.Patient == null)
+            {
+                throw new Exception("Không tìm thấy hồ sơ khám bệnh.");
+            }
+            var patient = await _db.Patients.FirstOrDefaultAsync(x => x.Id == medicalRecord.PatientId);
+            if (patient == null)
+            {
+                throw new Exception("Không tìm thấy bệnh nhân.");
+            }
+            var pescription = await _db.Prescriptions.FirstOrDefaultAsync(x => x.MedicalRecordId == medicalRecordId);
+            var listThuoc = await _db.PrescriptionDetails.Where(x => x.PrescriptionId == pescription.Id).ToListAsync();
+            float totalAmount = 0;
+            
+            foreach ( var item in listThuoc )
+            {
+                var thuoc = await _db.Medicines.FirstOrDefaultAsync(x => x.Id == item.MedicineId);
+                totalAmount += ((float)item.Quantity * thuoc.Price);
+            }
+            return new InvoiceResponseModel
+            {
+                PatientName = patient.FullName, // giả định Patients có FullName
+                DoctorName = medicalRecord.DoctorName,
+                ExaminationDate = medicalRecord.ExaminationDate,
+                Conclusion = medicalRecord.Conclusion,
+                TotalAmout = totalAmount,
+                
+            };
+        }
     }
 }
