@@ -175,8 +175,7 @@ namespace prj_QLPKDK.Services
                 throw new Exception("Không tìm thấy đơn thuốc.");
             var dellPresDetail = await _db.PrescriptionDetails.Where(x => x.PrescriptionId == prescription.Id).ToListAsync();
             // Xóa các PrescriptionDetail cũ
-            _db.PrescriptionDetails.RemoveRange(dellPresDetail);
-            await _db.SaveChangesAsync(); 
+            
 
             // Sau đó mới thêm các chi tiết mới
             var newDetails = new List<PrescriptionDetails>();
@@ -199,7 +198,8 @@ namespace prj_QLPKDK.Services
                     Unit = medicine.Unit
                 });
             }
-
+            _db.PrescriptionDetails.RemoveRange(dellPresDetail);
+            await _db.SaveChangesAsync(); 
             await _db.PrescriptionDetails.AddRangeAsync(newDetails);
             await _db.SaveChangesAsync();
             return true;
