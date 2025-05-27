@@ -1,4 +1,5 @@
 ﻿using prj_QLPKDK.Entities.BaseEntities;
+using prj_QLPKDK.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,13 +12,13 @@ namespace   prj_QLPKDK.Entities
         public MedicalRecords MedicalRecord { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmount { get; set; }
+        public float TotalAmount { get; set; }
 
-        [MaxLength(50)]
-        public string PaymentMethod { get; set; } = string.Empty;
+        
+        public PaymentMethod PaymentMethod { get; set; } 
 
-        [MaxLength(50)]
-        public bool PaymentStatus { get; set; }
+       
+        public PaymentStatus PaymentStatus { get; set; }
 
     }
 }

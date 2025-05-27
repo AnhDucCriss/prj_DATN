@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
 
 namespace prj_QLPKDK.Controllers
@@ -32,12 +33,12 @@ namespace prj_QLPKDK.Controllers
             }
         }
 
-        [HttpPut("update-payment-status/{medicalRecordId}")]
-        public async Task<IActionResult> UpdatePaymentStatus(string medicalRecordId)
+        [HttpPut("update-payment-status")]
+        public async Task<IActionResult> UpdatePaymentStatus([FromBody] InvoiceRequestModel dto)
         {
             try
             {
-                var result = await _invoiceService.UpdateAsync(medicalRecordId);
+                var result = await _invoiceService.UpdateAsync(dto);
                 return Ok(new { message = "Cập nhật hóa đơn thành công." });
             }
             catch (Exception ex)
@@ -47,5 +48,20 @@ namespace prj_QLPKDK.Controllers
             }
         }
 
+        [HttpGet("export-pdf/{medicalRecordId}")]
+        public async Task<IActionResult> ExportInvoicePdf(string medicalRecordId)
+        {
+            try
+            {
+                var pdfBytes = await _invoiceService.GenerateInvoicePdfAsync(medicalRecordId);
+
+                var fileName = $"HoaDon_{medicalRecordId}.pdf";
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

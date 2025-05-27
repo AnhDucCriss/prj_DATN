@@ -1,4 +1,6 @@
-﻿namespace prj_QLPKDK.Models.Response
+﻿using prj_QLPKDK.Enum;
+
+namespace prj_QLPKDK.Models.Response
 {
     public class InvoiceResponseModel
     {
@@ -7,6 +9,8 @@
         public DateTime ExaminationDate { get; set; }
         public string Conclusion { get; set; } = string.Empty;
         public float TotalAmout { get; set; }
-        public bool PaymentStatus { get; set; } = false;
+        public PaymentMethod PaymentMethod { get; set; } 
+        public PaymentStatus PaymentStatus { get; set; } 
+        
     }
 }

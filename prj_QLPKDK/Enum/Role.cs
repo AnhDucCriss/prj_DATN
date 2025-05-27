@@ -9,4 +9,14 @@ namespace prj_QLPKDK.Enum
         Nurse = 2,
         Accountant = 3
     }
+    public enum PaymentMethod
+    {
+        Transfer = 0,
+        Cash = 1
+    }
+    public enum PaymentStatus
+    {
+        Unpaid = 0,
+        Paid = 1
+    }
 }
