@@ -97,7 +97,7 @@ namespace prj_QLPKDK.Services
                 totalAmount += ((float)item.Quantity * thuoc.Price);
             }
             invoice.TotalAmount = totalAmount;
-
+            await _db.SaveChangesAsync();
             return new InvoiceResponseModel
             { 
                 PatientName = patient.FullName, 
