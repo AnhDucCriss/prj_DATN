@@ -10,14 +10,8 @@ namespace   prj_QLPKDK.Entities
         [ForeignKey("MedicalRecordId")]
         public string MedicalRecordId { get; set; }
         public MedicalRecords MedicalRecord { get; set; }
-
-        [Column(TypeName = "decimal(18,2)")]
         public float TotalAmount { get; set; }
-
-        
         public PaymentMethod PaymentMethod { get; set; } 
-
-       
         public PaymentStatus PaymentStatus { get; set; }
 
     }

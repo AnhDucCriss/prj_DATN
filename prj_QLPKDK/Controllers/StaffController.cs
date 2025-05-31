@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using prj_QLPKDK.Data;
 using prj_QLPKDK.Models.FilterResquest;
 using prj_QLPKDK.Models.Resquest;
 using prj_QLPKDK.Services.Abstraction;
@@ -14,10 +16,12 @@ namespace prj_QLPKDK.Controllers
     public class StaffController : ControllerBase
     {
         private readonly IStaffService _staffService;
+        private readonly WebContext _db;
 
-        public StaffController(IStaffService staffService)
+        public StaffController(IStaffService staffService, WebContext db)
         {
             _staffService = staffService;
+            _db = db;
         }
 
        
@@ -69,7 +73,28 @@ namespace prj_QLPKDK.Controllers
 
             return Ok(new { message = "Sửa nhân viên thành công." });
         }
+        [HttpGet("doctors")]
+        public async Task<IActionResult> GetDoctors()
+        {
+            try
+            {
+                var doctors = await _db.Staffs
+                    .Where(s => s.Position == "Bác sĩ")
+                    .Select(s => new
+                    {
+                        s.Id,
+                        s.FullName,
+                        s.Position
+                    })
+                    .ToListAsync();
 
+                return Ok(new { data = doctors });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi lấy danh sách bác sĩ", error = ex.Message });
+            }
+        }
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {

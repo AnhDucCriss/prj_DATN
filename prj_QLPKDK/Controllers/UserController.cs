@@ -12,7 +12,7 @@ namespace prj_QLPKDK.Controllers
     [EnableCors("AllowAngularApp")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserServices _service;
@@ -23,6 +23,7 @@ namespace prj_QLPKDK.Controllers
             
         }
         [HttpGet("get-users")]
+
         public async Task<IActionResult> GetUsers()
         {
             var User = await _service.GetAll();
